@@ -193,6 +193,37 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 }
 
 /**
+  * @brief  陀螺仪外部中断
+  * @param  无
+  * @retval 无
+  */
+extern void gyro_data_ready_cb(void);
+void EXTI1_IRQHandler(void)
+{
+	if (__HAL_GPIO_EXTI_GET_IT(MPU_INT_GPIO_PIN) != RESET) //确保是否产生了EXTI Line中断
+	{
+		/* Handle new gyro*/
+		gyro_data_ready_cb();
+
+		__HAL_GPIO_EXTI_CLEAR_IT(MPU_INT_GPIO_PIN);     //清除中断标志位
+	}
+}
+
+/**
+* @brief This function handles DMA1 stream4 global interrupt.
+*/
+void DMA1_Stream4_IRQHandler(void)
+{
+  I2Sx_TX_DMA_STREAM_IRQFUN();
+}
+/**
+* @brief This function handles DMA1 stream3 global interrupt.
+*/
+void DMA1_Stream3_IRQHandler(void)
+{
+  I2Sxext_RX_DMA_STREAM_IRQFUN();
+}
+/**
   * @}
   */ 
 

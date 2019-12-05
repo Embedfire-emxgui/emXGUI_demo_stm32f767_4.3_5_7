@@ -7,7 +7,7 @@
 #include "emXGUI_JPEG.h"
 #include "emxgui_png.h"
 
-#include "./i2c/i2c.h"
+#include "./i2c_for_mpu6050/MPU6050_i2c.h"  
 #include "./mpu6050/bsp_mpu_exti.h"
 #include "inv_mpu.h"
 #include "inv_mpu_dmp_motion_driver.h"
@@ -131,8 +131,9 @@ static void read_from_mpl(void)
         * test app to visually represent a 3D quaternion, it's sent each time
         * the MPL has new data.
         */
+#if	Printf_Log
         eMPL_send_quat(data);
-
+#endif
         /* Specific data packets can be sent or suppressed using USB commands. */
         if (hal.report & PRINT_QUAT)
             eMPL_send_data(PACKET_DATA_QUAT, data);
@@ -672,7 +673,7 @@ void Gyro_Dispose_Task(void *p)
 	EXTI_MPU_Config();
 	
 		// Configure I2C
-	I2CMaster_Init(); 
+	I2cMaster_Init();
 
 	
 	//MPU_DEBUG("F4 MPU6050 test");
@@ -1359,7 +1360,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       if(res)
       {
         #if BMP
-          png_dec = PNG_Open(pic_buf);
+          png_dec = PNG_Open(pic_buf,pic_size);
           PNG_GetBitmap(png_dec, &png_bm);
           DrawBitmap(Roll_hdc, 0,0, &png_bm, NULL);
           PNG_Close(png_dec);
@@ -1378,7 +1379,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       if(res)
       {
         #if BMP
-          png_dec = PNG_Open(pic_buf);
+          png_dec = PNG_Open(pic_buf,pic_size);
           PNG_GetBitmap(png_dec, &png_bm);
           DrawBitmap(Pitch_hdc, 0,0, &png_bm, NULL);
           PNG_Close(png_dec);

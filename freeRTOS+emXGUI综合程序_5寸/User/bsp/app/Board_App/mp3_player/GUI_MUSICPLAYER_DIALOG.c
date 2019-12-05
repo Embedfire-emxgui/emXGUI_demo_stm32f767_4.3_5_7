@@ -6,7 +6,7 @@
 #include "./mp3_player/Backend_mp3Player.h"
 #include "GUI_AppDef.h"
 #include "emXGUI_JPEG.h"
-#include "./sai/bsp_sai.h"
+#include "Bsp/wm8978/bsp_wm8978.h"
 
 /* 外部资源名 */
 #define ROTATE_DISK_NAME "rotate_disk_ARGB8888.bmp"
@@ -1118,7 +1118,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                      {
 
                         vTaskResume(h_music);
-                        SAI_Play_Start();
+                        I2S_Play_Start();
                         SetWindowText(sub11_wnd, L"U");
                         ResetTimer(hwnd, 1, 200, TMR_START,NULL);
                         
@@ -1126,7 +1126,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                      else if(music_icon[6].state != FALSE)
                      {
                         vTaskSuspend(h_music);
-                        SAI_Play_Stop();                    
+                        I2S_Play_Stop();                    
                         SetWindowText(sub11_wnd, L"T");
                         ResetTimer(hwnd, 1, 200, NULL,NULL);                       
 
@@ -1216,7 +1216,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                      {
                         
                         vTaskSuspend(h_music);
-                        SAI_Play_Stop();                    
+                        I2S_Play_Stop();                    
                         SetWindowText(mini_start, L"I");
                         
                         SetWindowText(sub11_wnd, L"I");
@@ -1226,7 +1226,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                      {
                         
                         vTaskResume(h_music);
-                        SAI_Play_Start();
+                        I2S_Play_Start();
                         SetWindowText(mini_start, L"H");
                         SetWindowText(sub11_wnd, L"H");
                         
@@ -1481,7 +1481,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
         power = 20;
         a = 0;
         
-        SAI_Play_Stop();		/* 停止I2S录音和放音 */
+        I2S_Play_Stop();		/* 停止I2S录音和放音 */
         wm8978_Reset();	/* 复位WM8978到复位状态 */ 
         a = PostQuitMessage(hwnd);	        
         return TRUE;	

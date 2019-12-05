@@ -143,17 +143,17 @@ static void BSP_Init(void)
 	/* 设置SDRAM为Normal类型,禁用共享, 直写模式*/  
 	Board_MPU_Config(0,MPU_Normal_WT,0xD0000000,MPU_16MB);
 	Board_MPU_Config(1,MPU_Normal_WT,0xD1000000,MPU_8MB);
-	Board_MPU_Config(2,MPU_Normal_WT,0x20020000,MPU_256KB);
-  Board_MPU_Config(3,MPU_Normal_WT,0x20060000,MPU_128KB);
-	Board_MPU_Config(4,MPU_Normal_WT,0x20000000,MPU_128KB);
+//	Board_MPU_Config(2,MPU_Normal_WT,0x20020000,MPU_256KB);
+//  Board_MPU_Config(3,MPU_Normal_WT,0x20060000,MPU_128KB);
+//	Board_MPU_Config(4,MPU_Normal_WT,0x20000000,MPU_128KB);
 //	
 //	MPU_Config();	
 	
   /* Enable I-Cache */
-  SCB_EnableICache(); 
-  /* Enable D-Cache */
-  SCB_EnableDCache();
-	
+//  SCB_EnableICache(); 
+//  /* Enable D-Cache */
+//  SCB_EnableDCache();
+//	
   /* 系统时钟初始化成216MHz */
 	SystemClock_Config();
 	
@@ -178,6 +178,14 @@ static void BSP_Init(void)
 
 	RTC_CLK_Config();
 
+	/* 检测WM8978芯片，此函数会自动配置CPU的GPIO */
+	if (wm8978_Init()==0)
+	{
+		printf("检测不到WM8978芯片!!!\n");
+		while (1);	/* 停机 */
+	}
+	printf("WM8978芯片初始化成功\n");
+	
 	MODIFY_REG(FMC_Bank1->BTCR[0],FMC_BCR1_MBKEN,0); //关闭FMC_Bank1,不然LCD会闪.
 
   /*hardfault 跟踪器初始化*/ 

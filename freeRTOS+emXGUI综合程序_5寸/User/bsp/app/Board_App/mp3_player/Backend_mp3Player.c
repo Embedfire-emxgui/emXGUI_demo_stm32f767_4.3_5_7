@@ -16,7 +16,7 @@
 */
 #include <stdio.h>
 #include <string.h>
-#include "Bsp/usart/bsp_usart.h"
+#include "Bsp/usart/bsp_debug_usart.h"
 #include "Bsp/wm8978/bsp_wm8978.h"
 #include "ff.h" 
 #include "./mp3_player/Backend_mp3Player.h"
@@ -26,7 +26,6 @@
 #include "x_libc.h"
 #include "./mp3_player/GUI_MUSICPLAYER_DIALOG.h"
 #include "./recorder/GUI_RECORDER_DIALOG.h"
-#include "./sai/bsp_sai.h"
 
 //#define Delay_ms GUI_msleep
 /* 推荐使用以下格式mp3文件：
@@ -195,9 +194,10 @@ void mp3PlayerDemo(HWND hwnd,const char *mp3file, uint8_t vol,uint8_t vol_horn, 
 	wm8978_CfgAudioIF(SAI_I2S_STANDARD, 16);
 	
 	/*  初始化并配置SAI  */
-	SAI_Play_Stop();
-	SAI_GPIO_Config();
-  SAI_DMA_TX_Callback = MusicPlayer_SAI_DMA_TX_Callback;
+	I2S_Play_Start();
+	I2S_GPIO_Config();
+  I2S_DMA_TX_Callback = MusicPlayer_I2S_DMA_TX_Callback;
+	I2Sx_TX_DMA_Init((uint32_t)&outbuffer[0],(uint32_t)&outbuffer[1],MP3BUFFER_SIZE);	
 
 	bufflag=0;
 	Isread=0;
@@ -367,10 +367,10 @@ void mp3PlayerDemo(HWND hwnd,const char *mp3file, uint8_t vol,uint8_t vol_horn, 
 				if(mp3player.ucFreq >= SAI_AUDIOFREQ_DEFAULT)
 				{
 					//根据采样率修改I2S速率
-          SAIxA_Tx_Config(SAI_I2S_STANDARD,SAI_PROTOCOL_DATASIZE_16BIT,mp3player.ucFreq);						//根据采样率修改iis速率
-          SAIA_TX_DMA_Init((uint32_t )&outbuffer[0],(uint32_t )&outbuffer[1],outputSamps);
+          I2Sx_Mode_Config(SAI_I2S_STANDARD,SAI_PROTOCOL_DATASIZE_16BIT,mp3player.ucFreq);						//根据采样率修改iis速率
+          I2Sx_TX_DMA_Init((uint32_t )&outbuffer[0],(uint32_t )&outbuffer[1],outputSamps);
 				}
-				SAI_Play_Start();
+				I2S_Play_Start();
 			}
 		}//else 解码正常
 		
@@ -389,8 +389,8 @@ void mp3PlayerDemo(HWND hwnd,const char *mp3file, uint8_t vol,uint8_t vol_horn, 
          SendMessage(music_wnd_time, SBM_SETVALUE, TRUE, 0); //设置位置值
          //清除歌词记数
          lyriccount=0;
-         //I2S_Stop();   
-			   SAI_Play_Stop();
+         I2S_Stop();   
+			   I2S_Play_Stop();
          MP3FreeDecoder(Mp3Decoder);
          f_close(&file);	
 			break;
@@ -522,7 +522,7 @@ void mp3PlayerDemo(HWND hwnd,const char *mp3file, uint8_t vol,uint8_t vol_horn, 
     timecount++;
 	}
    lyriccount=0;
-	 SAI_Play_Stop();
+	 I2S_Play_Start();
 	 mp3player.ucStatus=STA_IDLE;
 	 MP3FreeDecoder(Mp3Decoder);
 	 f_close(&file);	
@@ -567,8 +567,8 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc, HWND hwnd)
    
 	/*  初始化并配置SAI  */
 
-	  SAI_Play_Stop();
-	  SAI_GPIO_Config();
+	  I2S_Play_Stop();
+	  I2S_GPIO_Config();
     //SAI_DMA_TX_Callback = MusicPlayer_SAI_DMA_TX_Callback;  
 
     bufflag=0;
@@ -600,7 +600,7 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc, HWND hwnd)
       result = f_read(&file,(uint16_t *)buffer1,RECBUFFER_SIZE*2,&bw);
       
 //      Delay_ms(10);	/* 延迟一段时间，等待I2S中断结束 */			
-			SAI_Play_Stop();
+			I2S_Play_Stop();
       wm8978_Reset();		/* 复位WM8978到复位状态 */	
       wm8978_CtrlGPIO1(1);
       mp3player.ucStatus = STA_PLAYING;		/* 放音状态 */
@@ -625,9 +625,9 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc, HWND hwnd)
       /* 配置WM8978音频接口为飞利浦标准I2S接口，16bit */
 			wm8978_CfgAudioIF(SAI_I2S_STANDARD, 16);  
       
-			SAIxA_Tx_Config(g_FmtList[Recorder.ucFmtIdx][0],g_FmtList[Recorder.ucFmtIdx][1],g_FmtList[Recorder.ucFmtIdx][2]);
-      SAIA_TX_DMA_Init((uint32_t)buffer0,(uint32_t)buffer1,RECBUFFER_SIZE);		
-	    SAI_Play_Start();
+			I2Sx_Mode_Config(g_FmtList[Recorder.ucFmtIdx][0],g_FmtList[Recorder.ucFmtIdx][1],g_FmtList[Recorder.ucFmtIdx][2]);
+      I2Sx_TX_DMA_Init((uint32_t)buffer0,(uint32_t)buffer1,RECBUFFER_SIZE);		
+	    I2S_Play_Start();
    }
    /* 进入主程序循环体 */
    while(mp3player.ucStatus == STA_PLAYING){
@@ -773,8 +773,8 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc, HWND hwnd)
             if(play_index < 0) play_index = music_file_num - 1;
             printf("播放完或者读取出错退出...\r\n");
 					  /* 停止I2S录音和放音 */
-					  SAI_Rec_Stop();
-					  SAI_Play_Stop();
+					  I2Sxext_Recorde_Stop();
+					  I2S_Play_Stop();
             file.fptr=0;
             f_close(&file);
             
@@ -789,8 +789,8 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc, HWND hwnd)
       lrc.oldtime=0;
       lyriccount=0;      
    	 /* 停止I2S录音和放音 */
-	    SAI_Rec_Stop();
-	    SAI_Play_Stop();
+	    I2Sxext_Recorde_Stop();
+	    I2S_Play_Stop();
       wm8978_Reset();	/* 复位WM8978到复位状态 */
 			if(time2exit == 1)
 			{
@@ -802,9 +802,9 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc, HWND hwnd)
 /* DMA发送完成中断回调函数 */
 /* 缓冲区内容已经播放完成，需要切换缓冲区，进行新缓冲区内容播放 
    同时读取WAV文件数据填充到已播缓冲区  */
-void MusicPlayer_SAI_DMA_TX_Callback(void)
+void MusicPlayer_I2S_DMA_TX_Callback(void)
 {
-	if(DMA_Instance->CR&(1<<19)) //当前使用Memory1数据
+	if(I2Sx_TX_DMA_STREAM->CR&(1<<19)) //当前使用Memory1数据
 	{
 		bufflag=0;                       //可以将数据读取到缓冲区0
 	}

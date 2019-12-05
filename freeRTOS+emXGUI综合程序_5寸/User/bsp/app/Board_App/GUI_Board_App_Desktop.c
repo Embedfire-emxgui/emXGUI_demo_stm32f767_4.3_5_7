@@ -52,7 +52,7 @@ static void dummy(void *p)
 //extern void App_LED_DIALOG(void);//
 extern void	GUI_App_Desktop(void);//GUIAPPÑÝÊ¾
 //extern void App_GUI_Tutorial_DEMO(void);//GUIÑÝÊ¾
-//extern void	GUI_MUSICPLAYER_DIALOG(void);//ÒôÀÖ²¥·ÅÆ÷
+extern void	GUI_MUSICPLAYER_DIALOG(void);//ÒôÀÖ²¥·ÅÆ÷
 //extern void	GUI_VideoPlayer_DIALOG(void);//ÊÓÆµ²¥·ÅÆ÷
 //extern void GUI_AVIList_DIALOG(void);//
 extern void	GUI_LED_DIALOG(void);//RGBµÆ
@@ -61,12 +61,12 @@ extern void	GUI_LED_DIALOG(void);//RGBµÆ
 //extern void	GUI_RES_WRITER_DIALOG(void);//
 //extern void GUI_Boot_Interface_DIALOG(void);//
 extern void	GUI_PicViewer_Dialog(void);//Í¼Æ¬ä¯ÀÀÆ÷
-//extern void	GUI_RECORDER_DIALOG(void);//Â¼Òô
+extern void	GUI_RECORDER_DIALOG(void);//Â¼Òô
 extern void GUI_T_RH_Dialog(void);//ÎÂÊª¶È
 extern void GUI_ADC_CollectVoltage_Dialog(void);//µçÑ¹²É¼¯
 //extern void GUI_Phone_Dialog(void);//µç»°
 extern void GUI_CLOCK_DIALOG(void);//Ê±ÖÓ
-//extern void GUI_Gyro_Dialog(void);//ÍÓÂÝÒÇ
+extern void GUI_Gyro_Dialog(void);//ÍÓÂÝÒÇ
 extern void GUI_Settings_DIALOG(void);//ÉèÖÃ
 //extern void GUI_NetworkDLG_Dialog(void);//ÒÔÌ«Íø
 extern void	GUI_DEMO_RadiaMenu(void);//»ù´¡¿Ø¼þ
@@ -147,11 +147,11 @@ struct __obj_list menu_list_1[] = {
     //L"Textbox",		app_1, 		NULL,	 	RGB_WHITE,			dummy,
 
       L"GUIÓ¦ÓÃ",		    NULL, 	L"J", 	RGB_WHITE,		  	(void(*)(void *))GUI_App_Desktop,//GUI_App_Desktop,
-//      L"MP3²¥·ÅÆ÷",		  NULL,	  L"I",   RGB_WHITE,			  (void(*)(void *))GUI_MUSICPLAYER_DIALOG,//dummy,
-//      L"ÊÓÆµ²¥·ÅÆ÷",		NULL,	  L"D",   RGB_WHITE,				(void(*)(void *))GUI_VideoPlayer_DIALOG,
+			L"MP3²¥·ÅÆ÷",		  NULL,	  L"I",   RGB_WHITE,			  (void(*)(void *))GUI_MUSICPLAYER_DIALOG,//dummy,
+	//      L"ÊÓÆµ²¥·ÅÆ÷",		NULL,	  L"D",   RGB_WHITE,				(void(*)(void *))GUI_VideoPlayer_DIALOG,
       L"Ê±ÖÓ",		      NULL,	  L"H",   RGB_WHITE,				(void(*)(void *))GUI_CLOCK_DIALOG,//dummy,
 //				
-//			L"ÍÓÂÝÒÇ",	      NULL,	  L"R", 	RGB_WHITE,			  (void(*)(void *))GUI_Gyro_Dialog,//dummy,
+			L"ÍÓÂÝÒÇ",	      NULL,	  L"R", 	RGB_WHITE,			  (void(*)(void *))GUI_Gyro_Dialog,//dummy,
       L"RGB²ÊµÆ",	     	NULL,	  L"L",   RGB_WHITE,				(void(*)(void *))GUI_LED_DIALOG,
 //      L"ÉãÏñÍ·",	    	NULL,	  L"M",   RGB_WHITE, 				(void(*)(void *))GUI_Camera_DIALOG,//dummy,
       L"Í¼Æ¬ä¯ÀÀÆ÷",  	NULL, 	L"G",   RGB_WHITE,				(void(*)(void *))GUI_PicViewer_Dialog,
@@ -168,7 +168,7 @@ struct __obj_list menu_list_1[] = {
 //      L"¶ÌÐÅ",         	NULL,   L"U",   RGB_WHITE,				(void(*)(void *))GUI_SMS_Dialog,
 //      L"¶þÎ¬Âë",       	NULL,	  L"V",   RGB_WHITE,				(void(*)(void *))GUI_Camera_QRCode_DIALOG,//dummy,
 //				
-//      L"Â¼Òô»ú",	      NULL,	  L"Y", 	RGB_WHITE,			  (void(*)(void *))GUI_RECORDER_DIALOG,//dummy,        
+      L"Â¼Òô»ú",	      NULL,	  L"Y", 	RGB_WHITE,			  (void(*)(void *))GUI_RECORDER_DIALOG,//dummy,        
       L"»ù´¡¿Ø¼þ",	    NULL, 	L"D",   RGB_WHITE,				(void(*)(void *))GUI_DEMO_RadiaMenu,
       L"·äÃùÆ÷",	      NULL, 	L"i",   RGB_WHITE,				(void(*)(void *))GUI_Beeper_Dialog,
 			L"LED&KEY",       NULL,	  L"j",   RGB_WHITE,		 	  (void(*)(void *))GUI_LED_KEY_Dialog,				
@@ -516,7 +516,7 @@ void	GUI_Board_App_Desktop(void *p)
     wcex.hCursor = NULL;//LoadCursor(NULL, IDC_ARROW);
 
     //´´½¨Ö÷´°¿Ú
-    hwnd_home = CreateWindowEx(NULL,
+    hwnd_home = CreateWindowEx(WS_EX_FRAMEBUFFER,
         &wcex,
         L"IconViewer",
         //								/*WS_MEMSURFACE|*/WS_CAPTION|WS_DLGFRAME|WS_BORDER|WS_CLIPCHILDREN,

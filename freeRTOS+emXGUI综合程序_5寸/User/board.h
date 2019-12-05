@@ -24,6 +24,8 @@
 #include "./clock/RTC/bsp_rtc.h"
 #include "./beep/bsp_beep.h"   
 #include "./adc/bsp_adc.h"
+#include "./gyro/mpu6050/bsp_mpu_exti.h"
+#include "./wm8978/bsp_wm8978.h"  
 
 /*
 *************************************************************************

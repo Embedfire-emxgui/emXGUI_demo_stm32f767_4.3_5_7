@@ -14,13 +14,12 @@
 *
 ******************************************************************************
 */
-#include "Bsp/usart/bsp_usart.h"
+#include "Bsp/usart/bsp_debug_usart.h"
 //#include "bsp/key/bsp_key.h" 
 #include "Bsp/wm8978/bsp_wm8978.h"
 #include "ff.h" 
 #include "Backend_Recorder.h"
 #include "./mp3_player/Backend_mp3Player.h"
-#include "./sai/bsp_sai.h"
 
 /* 音频格式切换列表(可以自定义) */
 #define FMT_COUNT	6		/* 音频格式数组元素个数 */
@@ -32,8 +31,8 @@ WavHead rec_wav;            /* WAV设备  */
 uint8_t Isread=0;           /* DMA传输完成标志 */
 uint8_t bufflag=0;          /* 数据缓存区选择标志 */
 uint32_t wavsize=0;         /* wav音频数据大小 */
-__align(4) uint16_t record_buffer0[RECBUFFER_SIZE]	__attribute__((at(0x24008000)));//__EXRAM;  /* 数据缓存区1 ，实际占用字节数：RECBUFFER_SIZE*2 BUF不放在外部会有不能读取SD卡的BUG*/
-__align(4) uint16_t record_buffer1[RECBUFFER_SIZE]	__attribute__((at(0x24004000)));//__EXRAM;  /* 数据缓存区2 ，实际占用字节数：RECBUFFER_SIZE*2 */
+__EXRAM __align(4) uint16_t record_buffer0[RECBUFFER_SIZE];//	__attribute__((at(0x24008000)));//__EXRAM;  /* 数据缓存区1 ，实际占用字节数：RECBUFFER_SIZE*2 BUF不放在外部会有不能读取SD卡的BUG*/
+__EXRAM __align(4) uint16_t record_buffer1[RECBUFFER_SIZE];//	__attribute__((at(0x24004000)));//__EXRAM;  /* 数据缓存区2 ，实际占用字节数：RECBUFFER_SIZE*2 */
 
 FIL record_file	__EXRAM;			/* file objects */
 extern FRESULT result; 
@@ -268,12 +267,14 @@ void StartRecord(const char *filename)
 	rec_wav.datasize=0;            /* 语音数据大小 目前未确定*/
 	
 	/*  初始化并配置I2S  */
-  SAI_GPIO_Config();
-  //SAI_Play_Stop();
-  SAIxA_Tx_Config(g_FmtList[Recorder.ucFmtIdx][0],g_FmtList[Recorder.ucFmtIdx][1],g_FmtList[Recorder.ucFmtIdx][2]);
-	SAIxB_Rx_Config(g_FmtList[Recorder.ucFmtIdx][0],g_FmtList[Recorder.ucFmtIdx][1],g_FmtList[Recorder.ucFmtIdx][2]);
-  //SAI_DMA_TX_Callback=MusicPlayer_SAI_DMA_TX_Callback;
-  ucRefresh = 1;
+	I2S_Stop();
+  I2S_GPIO_Config();
+  I2Sx_Mode_Config(g_FmtList[Recorder.ucFmtIdx][0],g_FmtList[Recorder.ucFmtIdx][1],g_FmtList[Recorder.ucFmtIdx][2]);
+	I2Sxext_Mode_Config(g_FmtList[Recorder.ucFmtIdx][0],g_FmtList[Recorder.ucFmtIdx][1],g_FmtList[Recorder.ucFmtIdx][2]);
+	I2S_Play_Stop();
+	I2Sxext_Recorde_Stop();
+	
+	ucRefresh = 1;
 	bufflag=0;
 	Isread=0;
 #endif
@@ -293,8 +294,7 @@ void StartRecord(const char *filename)
 	result=f_write(&record_file,(const void *)&rec_wav,sizeof(rec_wav),&bw);
 	
 	GUI_msleep(10);		/* 延迟一段时间，等待I2S中断结束 */
-	SAI_Rec_Stop();			/* 停止I2S录音和放音 */	
-	SAI_Play_Stop();
+	I2S_Stop();			/* 停止I2S录音和放音 */	
 	wm8978_Reset();		/* 复位WM8978到复位状态 */
   wm8978_CtrlGPIO1(0);
 	Recorder.ucStatus = STA_RECORDING;		/* 录音状态 */
@@ -318,15 +318,18 @@ void StartRecord(const char *filename)
 	}
 		
 	/* 配置WM8978音频接口为飞利浦标准I2S接口，16bit */
-	//wm8978_CfgAudioIF(I2S_Standard_Phillips, 16);
-	wm8978_CfgAudioIF(SAI_I2S_STANDARD, 16);
+	 wm8978_CfgAudioIF(SAI_I2S_STANDARD, 16);
+	I2Sxext_Mode_Config(g_FmtList[Recorder.ucFmtIdx][0],g_FmtList[Recorder.ucFmtIdx][1],g_FmtList[Recorder.ucFmtIdx][2]);
 
-	 SAIA_TX_DMA_Init((uint32_t)&recplaybuf[0],(uint32_t)&recplaybuf[1],1);
-   __HAL_DMA_DISABLE_IT(&h_txdma,DMA_IT_TC);
-   SAIB_RX_DMA_Init((uint32_t)record_buffer0,(uint32_t)record_buffer1,RECBUFFER_SIZE);
+	I2Sxext_RX_DMA_Init(record_buffer0,record_buffer1,RECBUFFER_SIZE);
+  	
+	I2Sxext_Recorde_Start();
+//	 SAIA_TX_DMA_Init((uint32_t)&recplaybuf[0],(uint32_t)&recplaybuf[1],1);
+//   __HAL_DMA_DISABLE_IT(&h_txdma,DMA_IT_TC);
+//   SAIB_RX_DMA_Init((uint32_t)record_buffer0,(uint32_t)record_buffer1,RECBUFFER_SIZE);
 
-  SAI_Rec_Start();
-  SAI_Play_Start();
+//  SAI_Rec_Start();
+//  SAI_Play_Start();
 }
 
 ///**
@@ -404,11 +407,11 @@ void MusicPlayer_SAI_DMA_TX_Callback(void)
 	}
 }
 #endif
-void MusicPlayer_SAI_DMA_RX_Callback(void)
+void MusicPlayer_I2S_DMA_RX_Callback(void)
 {
 	if(Recorder.ucStatus == STA_RECORDING)
 	{
-		if(DMA1_Stream3->CR&(1<<19)) //当前使用Memory1数据
+		if(I2Sxext_RX_DMA_STREAM->CR&(1<<19)) //当前使用Memory1数据
 		{
 			bufflag=0;                       //可以将数据读取到缓冲区0
 		}

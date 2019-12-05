@@ -5,7 +5,7 @@
 #include "ff.h"
 #include "./mp3_player/Backend_mp3Player.h"
 #include "Backend_Recorder.h"
-#include "./sai/bsp_sai.h"
+#include "Bsp/wm8978/bsp_wm8978.h"
 uint16_t TaskGetState = 0;
 extern GUI_SEM * exit_sem;//创建一个信号量
 //图标管理数组
@@ -785,7 +785,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 EnableWindow(GetDlgItem(hwnd, ID_RECORD_START), DISABLE);     // 禁用开始录音按钮
               }
                 
-              SAI_Play_Start();
+              I2S_Play_Start();
               play_index = SendMessage(GetDlgItem(hwnd, ID_RECORD_LIST), LB_GETCURSEL,0,0);    // 获得当前选中项
               mp3player.ucStatus = STA_SWITCH;
             }
@@ -810,7 +810,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 EnableWindow(GetDlgItem(hwnd, ID_RECORD_START), DISABLE);     // 禁用开始录音按钮
               }
                 
-              SAI_Play_Start();
+              I2S_Play_Start();
               play_index = SendMessage(GetDlgItem(hwnd, ID_RECORD_LIST), LB_GETCURSEL,0,0);    // 获得当前选中项
               mp3player.ucStatus = STA_SWITCH;
             }
@@ -827,14 +827,14 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 							if (wbuf[0] == L'U')
 							{
                 vTaskSuspend(h_play_record);
-                SAI_Play_Stop(); 
+                I2S_Play_Start(); 
 								SetWindowText(wnd, L"T");
 								EnableWindow(GetDlgItem(hwnd, ID_RECORD_START), ENABLE);      // 使能开始录音按钮
 							}
 							else
 							{
                 vTaskResume(h_play_record);
-                SAI_Play_Start();
+                I2S_Play_Start();
 								SetWindowText(wnd, L"U");
 								EnableWindow(GetDlgItem(hwnd, ID_RECORD_START), DISABLE);     // 禁用开始录音按钮
 							}
@@ -923,8 +923,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
               /* 对于录音，需要把WAV文件内容填充完整 */
               if(Recorder.ucStatus == STA_RECORDING)
               {
-                SAI_Rec_Stop();
-                SAI_Play_Stop();
+                I2Sxext_Recorde_Start();
+                I2S_Play_Stop();
                 rec_wav.size_8=wavsize+36;
                 rec_wav.datasize=wavsize;
                 result=f_lseek(&record_file,0);
@@ -934,7 +934,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
               }
               //ucRefresh = 1;
               Recorder.ucStatus = STA_IDLE;		/* 待机状态 */
-              SAI_Play_Stop();		/* 停止SAI录音和放音 */
+              I2S_Play_Stop();		/* 停止SAI录音和放音 */
               wm8978_Reset();	/* 复位WM8978到复位状态 */
               
               /* 文件记录处理 */		
@@ -978,7 +978,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 							{
 								KillTimer(hwnd, ID_Record_Timer);       // 删除录音计时定时器
                 vTaskSuspend(h_record);    // 挂起录音任务
-                SAI_Rec_Stop();    // 停止录音
+                I2Sxext_Recorde_Stop();    // 停止录音
 								SetWindowText(GetDlgItem(hwnd, ID_RECORD_STATE), L"已暂停");          // 设置录音机状态
 								SetWindowText(wnd, L"T");
 							}
@@ -986,7 +986,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 							{
 								SetTimer(hwnd, ID_Record_Timer, 1000, TMR_START, NULL);               // 继续录音计时定时器
                 vTaskResume(h_record);      // 恢复录音任务
-                SAI_Rec_Start();    // 继续录音
+                I2Sxext_Recorde_Start();    // 继续录音
 								SetWindowText(GetDlgItem(hwnd, ID_RECORD_STATE), L"正在录音");         // 设置录音机状态
 								SetWindowText(wnd, L"U");
 							}
@@ -1047,7 +1047,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 						  EnableWindow(GetDlgItem(hwnd, ID_RECORD_START), DISABLE);     // 禁用开始录音按钮
             }
               
-            SAI_Play_Start();
+            I2S_Play_Start();
             play_index = SendMessage(GetDlgItem(hwnd, ID_RECORD_LIST), LB_GETCURSEL,0,0);    // 获得当前选中项
             mp3player.ucStatus = STA_SWITCH;
           }
@@ -1225,8 +1225,8 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				BUGLE_STATE = 0;
         music_file_num = 0;   // 复位文件记录
 				
-        SAI_Rec_Stop();		        /* 停止SAI录音和放音 */
-				SAI_Play_Stop();
+        I2Sxext_Recorde_Stop();		        /* 停止SAI录音和放音 */
+				I2S_Play_Stop();
         wm8978_Reset();	      /* 复位WM8978到复位状态 */ 
 
         return PostQuitMessage(hwnd);		
