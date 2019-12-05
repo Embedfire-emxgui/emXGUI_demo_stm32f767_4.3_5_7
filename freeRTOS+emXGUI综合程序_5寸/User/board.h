@@ -23,6 +23,7 @@
 #include "./bsp/mpu/bsp_mpu.h" 
 #include "./clock/RTC/bsp_rtc.h"
 #include "./beep/bsp_beep.h"   
+#include "./adc/bsp_adc.h"
 
 /*
 *************************************************************************

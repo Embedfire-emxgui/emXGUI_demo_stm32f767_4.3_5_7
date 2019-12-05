@@ -3,12 +3,12 @@
   * @file    core_delay.c
   * @author  fire
   * @version V1.0
-  * @date    2018-xx-xx
+  * @date    2019-xx-xx
   * @brief   使用内核寄存器精确延时
   ******************************************************************
   * @attention
   *
-  * 实验平台:野火 STM32H743开发板  
+  * 实验平台:野火 STM32F767开发板  
   * 论坛    :http://www.firebbs.cn
   * 淘宝    :https://fire-stm32.taobao.com
   *
@@ -40,8 +40,9 @@
 #define  DWT_CR      *(__IO uint32_t *)0xE0001000
 #define  DWT_CYCCNT  *(__IO uint32_t *)0xE0001004
 #define  DEM_CR      *(__IO uint32_t *)0xE000EDFC
-
-
+#define  DWT_LAR     *(__IO uint32_t *)0xE0001FB0
+ 
+#define  DWT_LAR_UNLOCK          (uint32_t)0xC5ACCE55
 #define  DEM_CR_TRCENA                   (1 << 24)
 #define  DWT_CR_CYCCNTENA                (1 <<  0)
 
@@ -54,6 +55,8 @@
   */
 HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 {
+    /* 解锁DWT寄存器 */
+		DWT_LAR        |= DWT_LAR_UNLOCK;
     /* 使能DWT外设 */
     DEM_CR |= (uint32_t)DEM_CR_TRCENA;                
 
@@ -82,7 +85,7 @@ uint32_t CPU_TS_TmrRd(void)
   * @retval 当前时间戳，即DWT_CYCCNT寄存器的值
   */
 uint32_t HAL_GetTick(void)
-{        
+{
   return ((uint32_t)DWT_CYCCNT/SysClockFreq*1000);
 }
 

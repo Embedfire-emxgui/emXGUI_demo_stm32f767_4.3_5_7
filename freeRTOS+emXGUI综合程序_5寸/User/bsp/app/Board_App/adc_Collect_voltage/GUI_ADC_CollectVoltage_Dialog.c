@@ -52,11 +52,11 @@
  
 uint8_t AovingDirection = 0;
 
-HWND MAIN_Handle;
-HWND Title_Handle;
-HWND Brigh_Handle;
-HWND ADC_Handle;
-HWND Brigh_TEXTBOX_Handle;
+static HWND MAIN_Handle;
+static HWND Title_Handle;
+//static HWND Brigh_Handle;
+static HWND ADC_HWND;
+//static HWND Brigh_TEXTBOX_Handle;
 
 HDC BacklightFont_hdc;
 HDC TrianglePointer_DC;
@@ -72,8 +72,6 @@ static uint8_t res_prep = 1;    // 资源准备标志(提前加载到SDRAM这里设置为1表示加
 
 // 局部变量，用于保存转换计算后的电压值 	 
 double ADC_Vol; 
-extern uint16_t ADC_ConvertedValue;
-extern void ADC_Init(void);
 
 static void	X_MeterPointer(HDC hdc, int cx, int cy, int r, u32 color, double dat_val)
 {
@@ -382,7 +380,7 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       HWND hwnd_scrolbar;
       SCROLLINFO sif;/*设置滑动条的参数*/
       GetClientRect(hwnd, &rc);
-      ADC_Init();    // 初始化 ADC
+      Rheostat_Init();    // 初始化 ADC
 //			GUI_msleep(500);
 //			SDRAM_Init();
       /*********************亮度调节滑动条******************/
@@ -570,8 +568,8 @@ static LRESULT	ADCWinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         double vol_buff = 0.0;
         static uint8_t xC = 0;
         static double ADC_Vol_Old;
-
-        vol_buff =(double) ADC_ConvertedValue/65536*(double)3.3; // 读取转换的AD值
+				ADC_ConvertedValue = HAL_ADC_GetValue(&ADC_Handle);
+        vol_buff =(double) ADC_ConvertedValue/4096*(double)3.3; // 读取转换的AD值
 //        GUI_DEBUG("电压值前为：%f", ADC_Vol);
         #if 1
 
@@ -874,7 +872,7 @@ static LRESULT	CollectVoltage_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
       rc.w = GUI_XSIZE*2;
       rc.h = GUI_YSIZE - TitleHeight * 2;
       // 创建" ADC 采集窗口"的控件.
-      ADC_Handle = CreateWindowEx(WS_EX_NOFOCUS, &wcex,L"---",WS_CLIPCHILDREN|WS_VISIBLE,rc.x,rc.y+7,rc.w,rc.h,hwnd,ID_ADV_WIN,NULL,NULL);
+      ADC_HWND = CreateWindowEx(WS_EX_NOFOCUS, &wcex,L"---",WS_CLIPCHILDREN|WS_VISIBLE,rc.x,rc.y+7,rc.w,rc.h,hwnd,ID_ADV_WIN,NULL,NULL);
             
       CreateWindow(BUTTON, L"O", WS_TRANSPARENT|BS_FLAT | BS_NOTIFY |WS_OWNERDRAW|WS_VISIBLE,
                   720, 5, 80, 80, hwnd, eID_ADC_EXIT, NULL, NULL); 

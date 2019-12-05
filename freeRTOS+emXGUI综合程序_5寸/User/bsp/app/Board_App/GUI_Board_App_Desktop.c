@@ -62,8 +62,8 @@ extern void	GUI_LED_DIALOG(void);//RGB灯
 //extern void GUI_Boot_Interface_DIALOG(void);//
 extern void	GUI_PicViewer_Dialog(void);//图片浏览器
 //extern void	GUI_RECORDER_DIALOG(void);//录音
-//extern void GUI_T_RH_Dialog(void);//温湿度
-//extern void GUI_ADC_CollectVoltage_Dialog(void);//电压采集
+extern void GUI_T_RH_Dialog(void);//温湿度
+extern void GUI_ADC_CollectVoltage_Dialog(void);//电压采集
 //extern void GUI_Phone_Dialog(void);//电话
 extern void GUI_CLOCK_DIALOG(void);//时钟
 //extern void GUI_Gyro_Dialog(void);//陀螺仪
@@ -156,8 +156,8 @@ struct __obj_list menu_list_1[] = {
 //      L"摄像头",	    	NULL,	  L"M",   RGB_WHITE, 				(void(*)(void *))GUI_Camera_DIALOG,//dummy,
       L"图片浏览器",  	NULL, 	L"G",   RGB_WHITE,				(void(*)(void *))GUI_PicViewer_Dialog,
 //			
-//      L"温湿度",	      NULL,   L"O",   RGB_WHITE,				(void(*)(void *))GUI_T_RH_Dialog,//dummy,
-//      L"电压表",		    NULL,	  L"W",   RGB_WHITE,				(void(*)(void *))GUI_ADC_CollectVoltage_Dialog,//dummy,  
+      L"温湿度",	      NULL,   L"O",   RGB_WHITE,				(void(*)(void *))GUI_T_RH_Dialog,//dummy,
+      L"电压表",		    NULL,	  L"W",   RGB_WHITE,				(void(*)(void *))GUI_ADC_CollectVoltage_Dialog,//dummy,  
 			L"设置",        	NULL,	  L"h",   RGB_WHITE,				(void(*)(void *))GUI_Settings_DIALOG,
 //			L"以太网",	     	NULL,	  L"Q",   RGB_WHITE,				(void(*)(void *))GUI_NetworkDLG_Dialog,//dummy,
 //				
