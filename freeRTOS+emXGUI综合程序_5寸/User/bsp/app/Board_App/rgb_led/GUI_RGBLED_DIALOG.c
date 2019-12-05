@@ -10,7 +10,7 @@
 #include "./pic_load/gui_pic_load.h"
 /* 硬件控制接口 */
 extern void TIM_GPIO_Config(void);
-extern void TIM_Mode_Config(void);
+extern void TIM_PWM_Mode_Config(void);
 extern void TIM_RGBLED_Close(void);
 extern void SetRGBColor(uint32_t rgb);
 extern void SetColorValue(uint8_t r,uint8_t g,uint8_t b);
@@ -443,7 +443,7 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          res = RES_Load_Content(GUI_RGBLED_CHECKED_PIC, (char**)&pic_buf, &pic_size);     // 资源在外部 FLASH
          if(res)
          {
-            png_dec = PNG_Open(pic_buf);
+            png_dec = PNG_Open(pic_buf,pic_size);
             PNG_GetBitmap(png_dec, &png_bm);
             DrawBitmap(hdc_rgbled_checked, 0, 0, &png_bm, NULL);
             PNG_Close(png_dec);
@@ -723,7 +723,7 @@ void	GUI_LED_DIALOG(void)
    //初始化定时器
    //LED_GPIO_Config();
    TIM_GPIO_Config();
-   TIM_Mode_Config();
+   TIM_PWM_Mode_Config();
    //SetColorValue(leddlg_S.col_R, leddlg_S.col_R, leddlg_S.col_R);
    
 	//创建主窗口

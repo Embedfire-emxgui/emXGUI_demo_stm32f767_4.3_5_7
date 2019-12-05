@@ -55,7 +55,7 @@ extern void	GUI_App_Desktop(void);//GUIAPPÑÝÊ¾
 //extern void	GUI_MUSICPLAYER_DIALOG(void);//ÒôÀÖ²¥·ÅÆ÷
 //extern void	GUI_VideoPlayer_DIALOG(void);//ÊÓÆµ²¥·ÅÆ÷
 //extern void GUI_AVIList_DIALOG(void);//
-//extern void	GUI_LED_DIALOG(void);//RGBµÆ
+extern void	GUI_LED_DIALOG(void);//RGBµÆ
 //extern void	GUI_Camera_DIALOG(void);//ÉãÏñÍ·
 //extern void GUI_Camera_QRCode_DIALOG(void);//¶þÎ¬Âë
 //extern void	GUI_RES_WRITER_DIALOG(void);//
@@ -72,8 +72,8 @@ extern void GUI_Settings_DIALOG(void);//ÉèÖÃ
 extern void	GUI_DEMO_RadiaMenu(void);//»ù´¡¿Ø¼þ
 //extern void GUI_Phone_Dialog(void);//µç»°
 //extern void GUI_SMS_Dialog(void);//¶ÌÐÅ
-//extern void GUI_Beeper_Dialog(void);//·äÃùÆ÷
-//extern void	GUI_LED_KEY_Dialog(void);//°´¼üºÍµÆ
+extern void GUI_Beeper_Dialog(void);//·äÃùÆ÷
+extern void	GUI_LED_KEY_Dialog(void);//°´¼üºÍµÆ
 //
 extern BOOL player_state;
 int thread_ctrl = 1;
@@ -152,7 +152,7 @@ struct __obj_list menu_list_1[] = {
       L"Ê±ÖÓ",		      NULL,	  L"H",   RGB_WHITE,				(void(*)(void *))GUI_CLOCK_DIALOG,//dummy,
 //				
 //			L"ÍÓÂÝÒÇ",	      NULL,	  L"R", 	RGB_WHITE,			  (void(*)(void *))GUI_Gyro_Dialog,//dummy,
-//      L"RGB²ÊµÆ",	     	NULL,	  L"L",   RGB_WHITE,				(void(*)(void *))GUI_LED_DIALOG,
+      L"RGB²ÊµÆ",	     	NULL,	  L"L",   RGB_WHITE,				(void(*)(void *))GUI_LED_DIALOG,
 //      L"ÉãÏñÍ·",	    	NULL,	  L"M",   RGB_WHITE, 				(void(*)(void *))GUI_Camera_DIALOG,//dummy,
       L"Í¼Æ¬ä¯ÀÀÆ÷",  	NULL, 	L"G",   RGB_WHITE,				(void(*)(void *))GUI_PicViewer_Dialog,
 //			
@@ -170,8 +170,8 @@ struct __obj_list menu_list_1[] = {
 //				
 //      L"Â¼Òô»ú",	      NULL,	  L"Y", 	RGB_WHITE,			  (void(*)(void *))GUI_RECORDER_DIALOG,//dummy,        
       L"»ù´¡¿Ø¼þ",	    NULL, 	L"D",   RGB_WHITE,				(void(*)(void *))GUI_DEMO_RadiaMenu,
-//      L"·äÃùÆ÷",	      NULL, 	L"i",   RGB_WHITE,				(void(*)(void *))GUI_Beeper_Dialog,
-//			L"LED&KEY",       NULL,	  L"j",   RGB_WHITE,		 	  (void(*)(void *))GUI_LED_KEY_Dialog,				
+      L"·äÃùÆ÷",	      NULL, 	L"i",   RGB_WHITE,				(void(*)(void *))GUI_Beeper_Dialog,
+			L"LED&KEY",       NULL,	  L"j",   RGB_WHITE,		 	  (void(*)(void *))GUI_LED_KEY_Dialog,				
 //        L"Radiobox",	NULL,   L"E", RGB_WHITE,				dummy,
 //        L"Textbox",	NULL,	  L"F", RGB_WHITE,				dummy,
 
