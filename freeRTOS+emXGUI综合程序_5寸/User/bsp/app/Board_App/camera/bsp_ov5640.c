@@ -18,7 +18,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "./camera/bsp_ov5640.h"
-#include "./i2c/i2c.h"
+#include "./i2c/bsp_i2c.h"
 #include "GUI_CAMERA_DIALOG.h"
 #include "./delay/core_delay.h"  
 #include "qr_decoder_user.h"
@@ -834,7 +834,7 @@ void OV5640_HW_Init(void)
     GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;    
     HAL_GPIO_Init(DCMI_RST_GPIO_PORT, &GPIO_InitStructure);
 
-    I2CMaster_Init();
+    Camera_I2CMaster_Init();
     HAL_GPIO_WritePin(DCMI_RST_GPIO_PORT,DCMI_RST_GPIO_PIN,GPIO_PIN_RESET);
     /*PWDN引脚，高电平关闭电源，低电平供电*/
     HAL_GPIO_WritePin(DCMI_PWDN_GPIO_PORT,DCMI_PWDN_GPIO_PIN,GPIO_PIN_SET);
@@ -843,7 +843,7 @@ void OV5640_HW_Init(void)
     Delay(10);
     HAL_GPIO_WritePin(DCMI_RST_GPIO_PORT,DCMI_RST_GPIO_PIN,GPIO_PIN_SET);
     //必须延时50ms,模块才会正常工作
-    Delay(50);
+    Delay(100);
 }
 /**
   * @brief  Resets the OV5640 camera.
@@ -918,12 +918,12 @@ void OV5640_DMA_Config(uint32_t DMA_Memory0BaseAddr,uint32_t DMA_BufferSize)
   /* 使能DMA*/
   __HAL_RCC_DMA2_CLK_ENABLE(); 
   DMA_Handle_dcmi.Instance = DMA2_Stream1;
-  DMA_Handle_dcmi.Init.Request = DMA_REQUEST_DCMI; 
+  DMA_Handle_dcmi.Init.Channel = DMA_CHANNEL_1;  
   DMA_Handle_dcmi.Init.Direction = DMA_PERIPH_TO_MEMORY;
   DMA_Handle_dcmi.Init.PeriphInc = DMA_PINC_DISABLE;
   DMA_Handle_dcmi.Init.MemInc = DMA_MINC_ENABLE;    //寄存器地址自增
   DMA_Handle_dcmi.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-  DMA_Handle_dcmi.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
+  DMA_Handle_dcmi.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
   DMA_Handle_dcmi.Init.Mode = DMA_CIRCULAR;		    //循环模式
   DMA_Handle_dcmi.Init.Priority = DMA_PRIORITY_HIGH;
   DMA_Handle_dcmi.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
@@ -934,7 +934,7 @@ void OV5640_DMA_Config(uint32_t DMA_Memory0BaseAddr,uint32_t DMA_BufferSize)
   /*DMA中断配置 */
   __HAL_LINKDMA(&DCMI_Handle, DMA_Handle, DMA_Handle_dcmi);
   
-  HAL_NVIC_SetPriority(DMA2_Stream1_IRQn, 2, 0);
+  HAL_NVIC_SetPriority(DMA2_Stream1_IRQn, 7, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
   
   HAL_DMA_Init(&DMA_Handle_dcmi);
@@ -1449,6 +1449,7 @@ void OV5640_ColorEffectsConfig(uint8_t value1, uint8_t value2)
   * @brief  开启或关闭摄像头采集
 	* @param  ENABLE或DISABLE
   */
+extern void LED_GPIO_Config(void);
 void OV5640_Capture_Control(FunctionalState state)
 {
   switch(state)
@@ -1463,8 +1464,9 @@ void OV5640_Capture_Control(FunctionalState state)
     {
       HAL_DCMI_Stop(&DCMI_Handle);
       HAL_DMA_Abort(&DMA_Handle_dcmi);		
-			
       HAL_DCMI_DeInit(&DCMI_Handle);
+//			LED_GPIO_Config();
+//			OV5640_HW_Init();
       break;
     }
   }
@@ -1523,8 +1525,6 @@ void OV5640_Capture_Control(FunctionalState state)
 //uint8_t fps;count*BLOCKSIZE + ((uint32_t)buff - alignedAddr)
 void HAL_DCMI_VsyncEventCallback(DCMI_HandleTypeDef *hdcmi)
 {
-    CamDialog.fps++; //帧率计数
-
     GUI_SemPostISR(cam_sem);  
 
 	if(cur_index == 0)//0--准备配置第二块内存，当前使用的是第一块内存
@@ -1532,18 +1532,7 @@ void HAL_DCMI_VsyncEventCallback(DCMI_HandleTypeDef *hdcmi)
 		  cur_index = 1;
 			if (QR_Task)
 			{
-//				SCB_InvalidateDCache_by_Addr((uint32_t *)CamDialog.cam_buff0,cam_mode.cam_out_width * cam_mode.cam_out_height *2);
 				cur_index = 0;
-		    HAL_DCMI_Suspend(&DCMI_Handle);
-        __HAL_DCMI_DISABLE(hdcmi);
-				SCB_InvalidateDCache_by_Addr((uint32_t *)CamDialog.cam_buff0, cam_mode.cam_out_height*cam_mode.cam_out_width / 2);
-        get_image((uint32_t)CamDialog.cam_buff0,cam_mode.cam_out_width , cam_mode.cam_out_height);//从缓存好的第一块内存中获取图像数据
-				/*重新开始采集*/
-				 HAL_DCMI_Resume(&DCMI_Handle);
-//				 __HAL_DCMI_ENABLE(hdcmi);
-       
-				OV5640_DMA_Config((uint32_t)CamDialog.cam_buff0,
-													cam_mode.cam_out_height*cam_mode.cam_out_width/2); 
 			}
 			else
 			{

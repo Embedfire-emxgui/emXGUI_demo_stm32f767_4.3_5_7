@@ -1,9 +1,5 @@
-/*********************************************************************
-File    : i2c.h
-Purpose : 
-**********************************************************************/
-#ifndef __I2C_H__
-#define __I2C_H__
+#ifndef __BSP_I2C_H__
+#define __BSP_I2C_H__
 /****************************** Includes *****************************/
 #include "stm32f7xx.h"
 #include "stm32f7xx_hal.h"
@@ -57,19 +53,20 @@ Purpose :
 
 
 																			 
-void WM8978_I2cMaster_Init(void);
+void Camera_I2CMaster_Init(void);
 unsigned short Get_I2C_Retry(void);
 																			 
-int WM8978_Sensors_I2C_ReadRegister(unsigned char slave_addr,
+HAL_StatusTypeDef Sensors_I2C_ReadRegister(unsigned char slave_addr,
                                        unsigned char reg_addr,
                                        unsigned short len, 
                                        unsigned char *data_ptr);
-int WM8978_Sensors_I2C_WriteRegister(unsigned char slave_addr,
+HAL_StatusTypeDef Sensors_I2C_WriteRegister(unsigned char slave_addr,
                                         unsigned char reg_addr,
                                         unsigned short len, 
                                         unsigned char *data_ptr);
 
-
-#endif // __I2C_H__
+uint8_t OV2640_WriteReg(uint16_t Addr, uint8_t Data);
+uint8_t OV2640_ReadReg(uint16_t Addr);
+#endif // __BSP_I2C_H__
 
 

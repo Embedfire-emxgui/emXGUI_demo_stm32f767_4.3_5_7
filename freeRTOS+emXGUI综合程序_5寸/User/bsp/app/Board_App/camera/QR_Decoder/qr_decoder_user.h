@@ -6,7 +6,7 @@
 
 // 开辟SDRAM的3M字节作为数据缓存，这里使用显存以外的空间，
 // 0xD0800000-0x300000 = 0xD0500000
-#define  QR_FRAME_BUFFER  ((uint32_t)(0xd18c0000))
+//#define  QR_FRAME_BUFFER  ((uint32_t)(0xd18c0000))
 
 /*扫描窗口参数*/
 #define  Frame_width           ((uint16_t)320)//扫描窗口边长（正方形）

@@ -223,6 +223,27 @@ void DMA1_Stream3_IRQHandler(void)
 {
   I2Sxext_RX_DMA_STREAM_IRQFUN();
 }
+
+/**
+  * @brief  DMA中断服务函数
+  * @param  None
+  * @retval None
+  */
+void DMA2_Stream1_IRQHandler(void)
+{
+  HAL_DMA_IRQHandler(&DMA_Handle_dcmi);
+}
+
+/**
+  * @brief  DCMI中断服务函数
+  * @param  None
+  * @retval None
+  */
+void DCMI_IRQHandler(void)
+{
+  HAL_DCMI_IRQHandler(&DCMI_Handle);
+}
+
 /**
   * @}
   */ 

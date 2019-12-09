@@ -28,7 +28,7 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
-#include "stm32h7xx.h"
+#include "stm32f7xx.h"
 #include "./camera/bsp_ov5640.h"
 #include "string.h"
 //#define Delay(ms)  Delay_ms(ms)

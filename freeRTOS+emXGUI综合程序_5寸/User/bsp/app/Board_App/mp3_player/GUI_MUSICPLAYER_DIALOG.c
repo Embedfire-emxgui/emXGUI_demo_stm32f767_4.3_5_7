@@ -360,13 +360,13 @@ static void App_PlayMusic(HWND hwnd)
          //打开成功，读取歌词文件，分析歌词文件，同时将flag置1，表示文件读取成功
          if((f_result==FR_OK)&&(f_file.fsize<COMDATA_SIZE))
          {					
-           f_result=f_read(&f_file,ReadBuffer1, sizeof(ReadBuffer1),&f_num);		
-           if(f_result==FR_OK) 
-           {  
-              lyric_analyze(&lrc,ReadBuffer1);
-              lrc_sequence(&lrc);
-              lrc.flag = 1;      
-           }
+//           f_result=f_read(&f_file,ReadBuffer1, sizeof(ReadBuffer1),&f_num);		
+//           if(f_result==FR_OK) 
+//           {  
+//              lyric_analyze(&lrc,ReadBuffer1);
+//              lrc_sequence(&lrc);
+//              lrc.flag = 1;      
+//           }
          }
          //打开失败（未找到该歌词文件），则将flag清零，表示没有读取到该歌词文件
          else
@@ -1109,19 +1109,13 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                //播放icon处理case
                case ID_BUTTON_START:
                {
-//                     WCHAR wbuf[128];
                      music_icon[6].state = ~music_icon[6].state;
-                     //擦除icon的背景
-                     //
-
                      if(music_icon[6].state == FALSE)
                      {
-
                         vTaskResume(h_music);
                         I2S_Play_Start();
                         SetWindowText(sub11_wnd, L"U");
                         ResetTimer(hwnd, 1, 200, TMR_START,NULL);
-                        
                      }
                      else if(music_icon[6].state != FALSE)
                      {
@@ -1129,8 +1123,6 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                         I2S_Play_Stop();                    
                         SetWindowText(sub11_wnd, L"T");
                         ResetTimer(hwnd, 1, 200, NULL,NULL);                       
-
-                        
                      }  
                      InvalidateRect(hwnd, &music_icon[6].rc, TRUE);                     
                   break;                  
@@ -1214,22 +1206,17 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                      //RedrawWindow(hwnd, NULL, RDW_ALLCHILDREN|RDW_INVALIDATE);
                      if(music_icon[9].state == FALSE)
                      {
-                        
                         vTaskSuspend(h_music);
                         I2S_Play_Stop();                    
                         SetWindowText(mini_start, L"I");
-                        
                         SetWindowText(sub11_wnd, L"I");
-                        
                      }
                      else if(music_icon[9].state != FALSE)
-                     {
-                        
+                     {          
                         vTaskResume(h_music);
                         I2S_Play_Start();
                         SetWindowText(mini_start, L"H");
                         SetWindowText(sub11_wnd, L"H");
-                        
                      }
 
                      
@@ -1482,6 +1469,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
         a = 0;
         
         I2S_Play_Stop();		/* 停止I2S录音和放音 */
+				I2S_Stop();
         wm8978_Reset();	/* 复位WM8978到复位状态 */ 
         a = PostQuitMessage(hwnd);	        
         return TRUE;	

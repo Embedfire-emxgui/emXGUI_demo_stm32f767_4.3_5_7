@@ -65,7 +65,7 @@ void LED_GPIO_Config(void)
     LED_RGBOFF;
 
     /*指示灯默认开启*/
-    LED4(ON);
+    LED4(OFF);
 		
 }
 /*********************************************END OF FILE**********************/

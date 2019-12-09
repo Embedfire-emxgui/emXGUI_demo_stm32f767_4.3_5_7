@@ -180,7 +180,7 @@ DRESULT SD_read(BYTE lun, BYTE *buff, DWORD sector, UINT count)
 
         return(res);
      }
-    GUI_MutexLock(mutex_lock,0xffffff);
+//    GUI_MutexLock(mutex_lock,0xffffff);
 
 			/* 字节对齐的情况 */
 		if(BSP_SD_ReadBlocks_DMA((uint32_t*)buff, 
@@ -200,7 +200,7 @@ DRESULT SD_read(BYTE lun, BYTE *buff, DWORD sector, UINT count)
 			SCB_InvalidateDCache_by_Addr((uint32_t*)buff, count*BLOCK_SIZE);
 		}
 		
-		GUI_MutexUnlock(mutex_lock);
+//		GUI_MutexUnlock(mutex_lock);
 //	GUI_DEBUG("oooooooooooooooSD_read(BYTE lun %d, BYTE *buff = 0x%p, DWORD sector = %ld, UINT count = %d)",lun,buff,sector,count);
 
   return res;

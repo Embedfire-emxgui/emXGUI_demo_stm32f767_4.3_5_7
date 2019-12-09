@@ -16,9 +16,10 @@ LR_IROM1 0x08000000 0x00100000  {    ; load region size_region
    .ANY (+RW +ZI)
    bsp_sdmmc_sd.o (+RW +ZI)
    gui_fs_port.o (+RW +ZI)
+   sd_diskio.o (+RW +ZI)
   }
   
-  RW_ERAM1 (0xd18bb800) 0x00400000 {  ; 外部SDRAM未使能cache区域  //100000
+  RW_ERAM1 (0xd1cbb800) 0x00280000 {  ; 外部SDRAM未使能cache区域  //100000
   ;*.o (HEAP)          选择堆区
    .ANY (EXRAM)				;选择EXRAM节区
   }

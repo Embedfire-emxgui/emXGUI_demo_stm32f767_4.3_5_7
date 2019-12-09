@@ -46,8 +46,8 @@ static FATFS fs;
 
 void FileSystem_Test(void);
 
-
-
+#include "./wm8978/bsp_wm8978.h"  
+#include "./mp3Player/mp3Player.h"
 /**
   * @brief  文件系统初始化
   * @param  无
@@ -120,6 +120,42 @@ BOOL FileSystem_Init(void)
 #if 1
     /* 文件系统测试 */
     FileSystem_Test();
+#if musictest
+/* ****************************************************************************** */
+	    printf("Music Player\n");
+    //链接驱动器，创建盘符
+    FATFS_LinkDriver(&SD_Driver, SDPath);
+	//在外部SD卡挂载文件系统，文件系统挂载时会对SD卡初始化
+	res_sd = f_mount(&fs,"0:",1);
+
+	if(res_sd!=FR_OK)
+	{
+		printf("！！SD卡挂载文件系统失败。(%d)\r\n",res_sd);
+		printf("！！可能原因：SD卡初始化不成功。\r\n");
+		while(1);
+	}
+	else
+	{
+		printf("SD卡挂载成功\r\n");
+	}
+	/* 检测WM8978芯片，此函数会自动配置CPU的GPIO */
+	if (wm8978_Init()==0)
+	{
+		printf("检测不到WM8978芯片!!!\n");
+		while (1);	/* 停机 */
+	}
+	printf("初始化WM8978成功\n");	
+	
+	
+	while(1)
+	{
+//    mp3PlayerDemo("0:/MP3文件/BEYOND - 海阔天空.mp3");
+		mp3PlayerDemo("0:/MP3文件/叶炫清-九张机.mp3");		
+	}
+	while(1){;}
+
+/* ****************************************************************************** */
+#endif
 #endif 
     
     /* 尝试进行unicode编码转换，

@@ -18,7 +18,6 @@
 #include "./usart/bsp_debug_usart.h"
 #include "main.h"
 #include "./i2c/i2c.h"
-//#include "./Recorder/Recorder.h"
 #include "./mp3_player/Backend_mp3Player.h"
 
 extern I2C_HandleTypeDef WM8978_I2C_Handle;
@@ -913,16 +912,13 @@ void I2S_Stop(void)
   * @param  AudioFreq: 用于播放音频流的音频频率  
   *       
   * @retval None
-  */  uint32_t oneceds = 0;
+  */
 void BSP_AUDIO_OUT_ClockConfig(I2S_HandleTypeDef *hi2s, uint32_t AudioFreq, void *Params)
 {
   RCC_PeriphCLKInitTypeDef RCC_ExCLKInitStruct;
 
   HAL_RCCEx_GetPeriphCLKConfig(&RCC_ExCLKInitStruct);
 
-	if(oneceds == 0)
-	{
-		oneceds = 1;
   /* 根据音频频率设置PLL配置 */
   if((AudioFreq == I2S_AUDIOFREQ_11K) || (AudioFreq == I2S_AUDIOFREQ_22K) || (AudioFreq == I2S_AUDIOFREQ_44K))
   {
@@ -949,12 +945,11 @@ void BSP_AUDIO_OUT_ClockConfig(I2S_HandleTypeDef *hi2s, uint32_t AudioFreq, void
     RCC_ExCLKInitStruct.Sai2ClockSelection = RCC_I2SCLKSOURCE_PLLI2S;
     RCC_ExCLKInitStruct.PLLI2S.PLLI2SP = 0;
     RCC_ExCLKInitStruct.PLLI2S.PLLI2SN = 344;
-	RCC_ExCLKInitStruct.PLLI2S.PLLI2SR = 7;
+  	RCC_ExCLKInitStruct.PLLI2S.PLLI2SR = 7;
     RCC_ExCLKInitStruct.PLLI2S.PLLI2SQ = 1;
     RCC_ExCLKInitStruct.PLLI2SDivQ = 1;
     HAL_RCCEx_PeriphCLKConfig(&RCC_ExCLKInitStruct);
   }
-}
 }
 
 
@@ -971,7 +966,7 @@ void I2Sx_Mode_Config(const uint16_t _usStandard,const uint16_t _usWordLen,const
 {
 	
 	/* PLL时钟根据AudioFreq设置 (44.1khz vs 48khz groups) */
-    BSP_AUDIO_OUT_ClockConfig(&I2S_InitStructure,_usAudioFreq, NULL); /* Clock config is shared between AUDIO IN and OUT */
+  BSP_AUDIO_OUT_ClockConfig(&I2S_InitStructure,_usAudioFreq, NULL); /* Clock config is shared between AUDIO IN and OUT */
 
 	/* 打开 I2S2 APB1 时钟 */
 	WM8978_CLK_ENABLE();
@@ -1032,10 +1027,10 @@ void I2Sx_TX_DMA_Init(const uint32_t buffer0,const uint32_t buffer1,const uint32
 	__HAL_LINKDMA(&I2S_InitStructure,hdmatx,hdma_spi2_tx);
 
 	  /* I2S中断的NVIC配置 */
-	HAL_NVIC_SetPriority(SPI2_IRQn, 0, 3);
+	HAL_NVIC_SetPriority(SPI2_IRQn, 3, 0);
 	HAL_NVIC_EnableIRQ(SPI2_IRQn);
 
-	HAL_NVIC_SetPriority(I2Sx_TX_DMA_STREAM_IRQn,0,1);
+	HAL_NVIC_SetPriority(I2Sx_TX_DMA_STREAM_IRQn,2,0);
 	HAL_NVIC_EnableIRQ(I2Sx_TX_DMA_STREAM_IRQn);
 }
 
@@ -1113,10 +1108,10 @@ void I2Sxext_RX_DMA_Init(const uint16_t *buffer0,const uint16_t *buffer1,const u
 	__HAL_LINKDMA(&I2Sext_InitStructure,hdmarx,hdma_spi2_rx);
 
 	/* NVIC configuration for I2S interrupts */
-	HAL_NVIC_SetPriority(SPI2_IRQn, 0, 3);
+	HAL_NVIC_SetPriority(SPI2_IRQn, 3, 0);
 	HAL_NVIC_EnableIRQ(SPI2_IRQn);
 
-	HAL_NVIC_SetPriority(I2Sxext_RX_DMA_STREAM_IRQn,0,0);
+	HAL_NVIC_SetPriority(I2Sxext_RX_DMA_STREAM_IRQn,2,0);
 	HAL_NVIC_EnableIRQ(I2Sxext_RX_DMA_STREAM_IRQn);
 }
 

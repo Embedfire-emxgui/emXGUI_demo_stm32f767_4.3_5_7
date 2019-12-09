@@ -26,6 +26,7 @@
 #include "./adc/bsp_adc.h"
 #include "./gyro/mpu6050/bsp_mpu_exti.h"
 #include "./wm8978/bsp_wm8978.h"  
+#include "./camera/bsp_ov5640.h"
 
 /*
 *************************************************************************
