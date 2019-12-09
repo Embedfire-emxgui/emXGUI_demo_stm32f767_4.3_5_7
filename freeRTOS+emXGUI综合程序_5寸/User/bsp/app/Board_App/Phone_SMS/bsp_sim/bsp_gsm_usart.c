@@ -29,13 +29,15 @@
 void GSM_USART_Config(void)
 {
 	  GPIO_InitTypeDef GPIO_InitStruct;
-    RCC_PeriphCLKInitTypeDef RCC_PeriphClkInit;
-	
-	 /* 配置串口6时钟源*/
-		RCC_PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART6;
-		RCC_PeriphClkInit.Usart16ClockSelection = RCC_USART16CLKSOURCE_D2PCLK2;
-		HAL_RCCEx_PeriphCLKConfig(&RCC_PeriphClkInit);
+//    RCC_PeriphCLKInitTypeDef RCC_PeriphClkInit;
+//	
+//	 /* 配置串口6时钟源*/
+//		RCC_PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART6;
+//		RCC_PeriphClkInit.Usart6ClockSelection = RCC_USART6CLKSOURCE_PCLK2;
+//		HAL_RCCEx_PeriphCLKConfig(&RCC_PeriphClkInit);
 		/* 使能串口6时钟 */
+		GSM_USART_TX_GPIO_CLK;
+		GSM_USART_RX_GPIO_CLK;
 		GSM_USART_CLK_ENABLE();
 	
 	/* 配置Tx引脚为复用功能  */
@@ -62,7 +64,7 @@ void GSM_USART_Config(void)
 	  HAL_UART_Init(&GSM_UartHandle);
 	  	
 				/*配置中断优先级*/
-		HAL_NVIC_SetPriority(GSM_USART_IRQ, 1, 0);
+		HAL_NVIC_SetPriority(GSM_USART_IRQ, 7, 0);
 		 /*使能DMA中断*/
 		HAL_NVIC_EnableIRQ(GSM_USART_IRQ);
 		 /*配置中断条件*/

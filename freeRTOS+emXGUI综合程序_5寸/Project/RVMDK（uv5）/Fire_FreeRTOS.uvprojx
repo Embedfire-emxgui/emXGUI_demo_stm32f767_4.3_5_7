@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F767xx,X_GUI_USE_FREERTOS,USE_DMP,MPL_LOG_NDEBUG=1,EMPL,MPU6050,EMPL_TARGET_STM32F7,NDEBUG,</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Libraries\CMSIS\Include;..\..\Libraries\CMSIS\Device\ST\STM32F7xx\Include;..\..\Libraries\STM32F7xx_HAL_Driver\Inc;..\..\User;..\..\FreeRTOS\include;..\..\FreeRTOS\port\RVDS\ARM_CM7\r0p1;..\..\User\delay;..\..\User\key;..\..\User\led;..\..\User\usart;..\..\User\bsp;..\..\emXGUI_Lib;..\..\emXGUI_Lib\app\base;..\..\emXGUI_Lib\drv;..\..\emXGUI_Lib\arch\Inc;..\..\emXGUI_Lib\inc;..\..\User\FATFS;..\..\User\bsp\cm_backtrace;..\..\User\bsp\app\GUI_Demo;..\..\User\bsp\app\Board_App;..\..\User\OwnerDraw;..\..\User\bsp\app\Board_App\gyro;..\..\User\bsp\app\Board_App\gyro\mpu6050\driver\include;..\..\User\bsp\app\Board_App\gyro\mpu6050\driver\eMPL;..\..\User\bsp\app\Board_App\gyro\mpu6050\mllite;..\..\User\bsp\app\Board_App\gyro\mpu6050\mpl;..\..\User\bsp\app\Board_App\gyro\mpu6050\eMPL-hal;..\..\User\bsp\app\Board_App\gyro\mpu6050\driver\stm32L;..\..\User\bsp\app\Board_App\mp3_decoder\pub;..\..\..\..\demo_code_f767;..\..\User\bsp\app\Board_App\camera\QR_Decoder</IncludePath>
+              <IncludePath>..\..\Libraries\CMSIS\Include;..\..\Libraries\CMSIS\Device\ST\STM32F7xx\Include;..\..\Libraries\STM32F7xx_HAL_Driver\Inc;..\..\User;..\..\FreeRTOS\include;..\..\FreeRTOS\port\RVDS\ARM_CM7\r0p1;..\..\User\delay;..\..\User\key;..\..\User\led;..\..\User\usart;..\..\User\bsp;..\..\emXGUI_Lib;..\..\emXGUI_Lib\app\base;..\..\emXGUI_Lib\drv;..\..\emXGUI_Lib\arch\Inc;..\..\emXGUI_Lib\inc;..\..\User\FATFS;..\..\User\bsp\cm_backtrace;..\..\User\bsp\app\GUI_Demo;..\..\User\bsp\app\Board_App;..\..\User\OwnerDraw;..\..\User\bsp\app\Board_App\gyro;..\..\User\bsp\app\Board_App\gyro\mpu6050\driver\include;..\..\User\bsp\app\Board_App\gyro\mpu6050\driver\eMPL;..\..\User\bsp\app\Board_App\gyro\mpu6050\mllite;..\..\User\bsp\app\Board_App\gyro\mpu6050\mpl;..\..\User\bsp\app\Board_App\gyro\mpu6050\eMPL-hal;..\..\User\bsp\app\Board_App\gyro\mpu6050\driver\stm32L;..\..\User\bsp\app\Board_App\mp3_decoder\pub;..\..\..\..\demo_code_f767;..\..\User\bsp\app\Board_App\camera\QR_Decoder;..\..\User\bsp\app\Board_App\Phone_SMS\bsp_sim</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1945,6 +1945,31 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>tutorial/PhoneCallMonitorTask</GroupName>
+          <Files>
+            <File>
+              <FileName>GUI_Phone_Dialog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp\app\Board_App\Phone_SMS\GUI_Phone_Dialog.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_SMS_Dialog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp\app\Board_App\Phone_SMS\GUI_SMS_Dialog.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_gsm_gprs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp\app\Board_App\Phone_SMS\bsp_sim\bsp_gsm_gprs.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_gsm_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp\app\Board_App\Phone_SMS\bsp_sim\bsp_gsm_usart.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -70,8 +70,8 @@ extern void GUI_Gyro_Dialog(void);//陀螺仪
 extern void GUI_Settings_DIALOG(void);//设置
 //extern void GUI_NetworkDLG_Dialog(void);//以太网
 extern void	GUI_DEMO_RadiaMenu(void);//基础控件
-//extern void GUI_Phone_Dialog(void);//电话
-//extern void GUI_SMS_Dialog(void);//短信
+extern void GUI_Phone_Dialog(void);//电话
+extern void GUI_SMS_Dialog(void);//短信
 extern void GUI_Beeper_Dialog(void);//蜂鸣器
 extern void	GUI_LED_KEY_Dialog(void);//按键和灯
 //
@@ -164,8 +164,8 @@ struct __obj_list menu_list_1[] = {
 //			L"游戏",        	NULL,	  L"S",   RGB_WHITE,				(void(*)(void *))dummy,
 //      //L"模拟U盘",   	NULL,	  L"N",   RGB_WHITE,				dummy,       
 //      //L"WiFi",	    	NULL,	  L"P",   RGB_WHITE,				dummy,
-//      L"电话",	        NULL, 	L"T",   RGB_WHITE,				(void(*)(void *))GUI_Phone_Dialog,
-//      L"短信",         	NULL,   L"U",   RGB_WHITE,				(void(*)(void *))GUI_SMS_Dialog,
+      L"电话",	        NULL, 	L"T",   RGB_WHITE,				(void(*)(void *))GUI_Phone_Dialog,
+      L"短信",         	NULL,   L"U",   RGB_WHITE,				(void(*)(void *))GUI_SMS_Dialog,
       L"二维码",       	NULL,	  L"V",   RGB_WHITE,				(void(*)(void *))GUI_Camera_QRCode_DIALOG,//dummy,
 //				
       L"录音机",	      NULL,	  L"Y", 	RGB_WHITE,			  (void(*)(void *))GUI_RECORDER_DIALOG,//dummy,        
