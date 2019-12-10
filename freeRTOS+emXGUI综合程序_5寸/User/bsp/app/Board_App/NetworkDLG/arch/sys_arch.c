@@ -430,7 +430,7 @@ sys_arch_mbox_tryfetch(sys_mbox_t *q, void **msg)
 #endif /* LWIP_NETCONN_SEM_PER_THREAD */
 
 #endif /* !NO_SYS */
-
+#include "emXGUI.h"
 /* Variables Initialization */
 struct netif gnetif;
 ip4_addr_t ipaddr;
@@ -444,7 +444,7 @@ extern SemaphoreHandle_t Wait_TCPIP_Init_Sem;
 void My_TCPIP_initialization(uint8_t *ipaddr_test)
 {
   tcpip_init(NULL, NULL);
-  
+
   /* IP addresses initialization */
   /* USER CODE BEGIN 0 */
 #if LWIP_DHCP
@@ -460,7 +460,7 @@ void My_TCPIP_initialization(uint8_t *ipaddr_test)
   /* Initilialize the LwIP stack without RTOS */
   /* add the network interface (IPv4/IPv6) without RTOS */
   netif_add(&gnetif, &ipaddr, &netmask, &gw, NULL, &ethernetif_init, &tcpip_input);
-	
+
   /* Registers the default network interface */
   netif_set_default(&gnetif);
 
@@ -474,7 +474,7 @@ void My_TCPIP_initialization(uint8_t *ipaddr_test)
     /* When the netif link is down this function must be called */
     netif_set_down(&gnetif);
   }
-  
+
 #if LWIP_DHCP	   			//若使用了DHCP
   int err;
   /*  Creates a new DHCP client for this interface on the first call.
@@ -483,7 +483,7 @@ void My_TCPIP_initialization(uint8_t *ipaddr_test)
   You can peek in the netif->dhcp struct for the actual DHCP status.*/
   
   printf("本例程将使用DHCP动态分配IP地址,如果不需要则在lwipopts.h中将LWIP_DHCP定义为0\n\n");
-  
+	
   err = dhcp_start(&gnetif);      //开启dhcp
   if(err == ERR_OK)
     printf("lwip dhcp init success...\n\n");
@@ -494,10 +494,8 @@ void My_TCPIP_initialization(uint8_t *ipaddr_test)
   {
     vTaskDelay(1);
   }
-	
+
 #endif
-	 
-	  xSemaphoreGive(Wait_TCPIP_Init_Sem);//初始化完成,释放信号量
 		printf("本地IP地址是:%d.%d.%d.%d\n\n",  \
 					((gnetif.ip_addr.addr)&0x000000ff),       \
 					(((gnetif.ip_addr.addr)&0x0000ff00)>>8),  \
@@ -508,6 +506,8 @@ void My_TCPIP_initialization(uint8_t *ipaddr_test)
 				ipaddr_test[1] = (((gnetif.ip_addr.addr)&0x0000ff00)>>8);
 				ipaddr_test[2] = (((gnetif.ip_addr.addr)&0x00ff0000)>>16);
 				ipaddr_test[3] = (((gnetif.ip_addr.addr)&0xff000000)>>24);
+	
+		xSemaphoreGive(Wait_TCPIP_Init_Sem);//初始化完成,释放信号量
 }
 
 

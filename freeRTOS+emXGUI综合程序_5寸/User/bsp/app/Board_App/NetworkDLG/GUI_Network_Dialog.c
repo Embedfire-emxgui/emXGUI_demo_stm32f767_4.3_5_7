@@ -8,6 +8,7 @@
 #include "tcp_echoclient.h"
 #include "tcp_echoserver.h"
 #include "udp_echoclient.h"
+#include "sys_arch.h"
 
 int		number_input_box(int x, int y, int w, int h,
 							const WCHAR *pCaption,
@@ -69,10 +70,10 @@ void Network_Dispose_Task(void *p)
 	
 	if(network_start_flag == 0)
 	{
-	if(xSemaphoreTake( Wait_TCPIP_Init_Sem,5000) != pdTRUE)
+	if(xSemaphoreTake( Wait_TCPIP_Init_Sem,20000) != pdTRUE)
 		{
       network_start_flag=0;
-      bsp_result |=1;
+      bsp_result = 0;
       /* 初始化出错 */
       SetTimer(Network_Main_Handle, 10, 100, TMR_SINGLE|TMR_START, NULL);
       vTaskSuspend(Network_Task_Handle);    // 挂起自己 不在执行 
@@ -80,7 +81,7 @@ void Network_Dispose_Task(void *p)
     else
     {
       network_start_flag=1;
-      bsp_result &=~ 1;  
+      bsp_result = 1;  
     }
 	}
 	DestroyWindow(Message_Hwnd);
@@ -116,7 +117,7 @@ void Network_Dispose_Task(void *p)
  #endif 
 //  PostCloseMessage(GetDlgItem(Network_Main_Handle, ID_Hint_Win));
 
-  InvalidateRect(Network_Main_Handle, NULL, TRUE);
+  InvalidateRect(Network_Main_Handle, NULL, FALSE);
   drv_network.net_connect=0;
   drv_network.net_type=0; 
 //  TIM3_Config(999,899);//10ms定时器 
@@ -384,7 +385,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				RC.h = 170;
 				RC.x = (GUI_XSIZE - RC.w) >> 1;
 				RC.y = (GUI_YSIZE - RC.h) >> 1;
-				Message_Hwnd = CreateWindow(TEXTBOX, L"正在初始化\r\n\n请等待...", WS_VISIBLE|WS_BORDER|WS_OVERLAPPED, RC.x, RC.y-20, RC.w, RC.h, hwnd, ID_TEXTBOX_Wait, NULL, NULL);//
+				Message_Hwnd = CreateWindow(TEXTBOX, L"正在初始化\r\n请等待10~20S\r\n若长时间未初始化成功\r\n请复位开发板...", WS_VISIBLE|WS_BORDER|WS_OVERLAPPED, RC.x, RC.y-20, RC.w, RC.h, hwnd, ID_TEXTBOX_Wait, NULL, NULL);//
 				SendMessage(Message_Hwnd, TBM_SET_TEXTFLAG, 0, DT_VCENTER | DT_CENTER | DT_BKGND);
 				EnableWindow(GetDlgItem(hwnd, eID_Network_EXIT), DISABLE);
 			}

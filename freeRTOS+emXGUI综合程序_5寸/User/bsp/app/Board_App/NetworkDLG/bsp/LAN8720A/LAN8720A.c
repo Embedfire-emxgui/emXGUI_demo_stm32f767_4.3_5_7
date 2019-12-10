@@ -102,14 +102,12 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
   ETH_GPIO_Config();
   
   /* Enable the Ethernet global Interrupt */
-  HAL_NVIC_SetPriority(ETH_IRQn, 0x7, 0);
+  HAL_NVIC_SetPriority(ETH_IRQn, 7, 0);
   HAL_NVIC_EnableIRQ(ETH_IRQn);
   
   /* 使能以太网时钟  */
-  __HAL_RCC_ETH1MAC_CLK_ENABLE();
-  __HAL_RCC_ETH1TX_CLK_ENABLE();
-  __HAL_RCC_ETH1RX_CLK_ENABLE();    
-}  
+	__HAL_RCC_ETH_CLK_ENABLE();
+}
 
 /**
   * @brief  初始化LAN8720A.
@@ -118,6 +116,7 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
   */  
 HAL_StatusTypeDef LAN8720_Init(ETH_HandleTypeDef *heth)
 {
+#if 0
     uint32_t phyreg = 0;
     uint32_t TIME_Out = 0;
     //软件复位LAN8720A
@@ -140,9 +139,9 @@ HAL_StatusTypeDef LAN8720_Init(ETH_HandleTypeDef *heth)
       TIME_Out++;
       if(TIME_Out > PHY_READ_TO) 
         return HAL_TIMEOUT;
-    } while (((phyreg & PHY_AUTONEGO_COMPLETE) != PHY_AUTONEGO_COMPLETE));
-    
-    return HAL_OK;    
+    } while (((phyreg & PHY_AUTONEGO_COMPLETE) != PHY_AUTONEGO_COMPLETE));  
+#endif		
+    return HAL_OK; 
 }
 
 /**
@@ -152,11 +151,13 @@ HAL_StatusTypeDef LAN8720_Init(ETH_HandleTypeDef *heth)
   */
 uint32_t LAN8720_GetLinkState(ETH_HandleTypeDef *heth)
 {
+#if 0
     uint32_t phyreg = 0;   
   
     if(HAL_ETH_ReadPHYRegister(heth, LAN8720A_PHY_ADDRESS, PHY_SR, &phyreg) == HAL_OK)
         return phyreg;
-    return 0;
+#endif
+	return 0;
 
 }
 

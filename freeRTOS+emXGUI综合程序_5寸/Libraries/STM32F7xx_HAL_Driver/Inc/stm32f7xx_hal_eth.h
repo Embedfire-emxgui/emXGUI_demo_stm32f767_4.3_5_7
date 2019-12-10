@@ -43,7 +43,7 @@
  extern "C" {
 #endif
 
-#if defined (ETH)   
+#if 1//defined (ETH)   
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal_def.h"

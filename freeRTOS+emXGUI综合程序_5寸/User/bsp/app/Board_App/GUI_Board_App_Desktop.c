@@ -68,7 +68,7 @@ extern void GUI_ADC_CollectVoltage_Dialog(void);//电压采集
 extern void GUI_CLOCK_DIALOG(void);//时钟
 extern void GUI_Gyro_Dialog(void);//陀螺仪
 extern void GUI_Settings_DIALOG(void);//设置
-//extern void GUI_NetworkDLG_Dialog(void);//以太网
+extern void GUI_NetworkDLG_Dialog(void);//以太网
 extern void	GUI_DEMO_RadiaMenu(void);//基础控件
 extern void GUI_Phone_Dialog(void);//电话
 extern void GUI_SMS_Dialog(void);//短信
@@ -159,7 +159,7 @@ struct __obj_list menu_list_1[] = {
       L"温湿度",	      NULL,   L"O",   RGB_WHITE,				(void(*)(void *))GUI_T_RH_Dialog,//dummy,
       L"电压表",		    NULL,	  L"W",   RGB_WHITE,				(void(*)(void *))GUI_ADC_CollectVoltage_Dialog,//dummy,  
 			L"设置",        	NULL,	  L"h",   RGB_WHITE,				(void(*)(void *))GUI_Settings_DIALOG,
-//			L"以太网",	     	NULL,	  L"Q",   RGB_WHITE,				(void(*)(void *))GUI_NetworkDLG_Dialog,//dummy,
+			L"以太网",	     	NULL,	  L"Q",   RGB_WHITE,				(void(*)(void *))GUI_NetworkDLG_Dialog,//dummy,
 //				
 //			L"游戏",        	NULL,	  L"S",   RGB_WHITE,				(void(*)(void *))dummy,
 //      //L"模拟U盘",   	NULL,	  L"N",   RGB_WHITE,				dummy,       

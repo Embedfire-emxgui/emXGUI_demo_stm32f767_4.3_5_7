@@ -46,7 +46,7 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32h7xx_hal.h"
+#include "stm32f7xx_hal.h"
 #include "lwip/opt.h"
 #include "lwip/timeouts.h"
 #include "lwip/netif.h"
@@ -86,19 +86,18 @@
 */
 
 //以太网描述符和缓冲区
-__attribute__((at(0x30040000))) ETH_DMADescTypeDef  DMARxDscrTab[ETH_RX_DESC_CNT];      //以太网Rx DMA描述符
-__attribute__((at(0x30040060))) ETH_DMADescTypeDef  DMATxDscrTab[ETH_TX_DESC_CNT];      //以太网Tx DMA描述符
-__attribute__((at(0x30040200))) uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_RX_BUFFER_SIZE];  //以太网接收缓冲区
-//__attribute__((section(".RxDecripSection"))) ETH_DMADescTypeDef  DMARxDscrTab[ETH_RX_DESC_CNT]; /* Ethernet Rx DMA Descriptors */
-//__attribute__((section(".TxDecripSection"))) ETH_DMADescTypeDef  DMATxDscrTab[ETH_TX_DESC_CNT]; /* Ethernet Tx DMA Descriptors */
-//__attribute__((section(".RxArraySection"))) uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_RX_BUFFER_SIZE]; /* Ethernet Receive Buffer */
+ETH_DMADescTypeDef  DMARxDscrTab[ETH_RXBUFNB] ;//__attribute__((at(0x20080000)));/* Ethernet Rx DMA Descriptor */
+
+ETH_DMADescTypeDef  DMATxDscrTab[ETH_TXBUFNB] ;//__attribute__((at(0x20000100)));/* Ethernet Tx DMA Descriptor */
+
+uint8_t Rx_Buff[ETH_RXBUFNB][ETH_RX_BUF_SIZE] ;//__attribute__((at(0x2007C000))); /* Ethernet Receive Buffer */
+
+uint8_t Tx_Buff[ETH_TXBUFNB][ETH_TX_BUF_SIZE] ;//__attribute__((at(0x2007DDC4))); /* Ethernet Transmit Buffer */
 
 //struct pbuf_custom rx_pbuf[ETH_RX_DESC_CNT];
 uint32_t current_pbuf_idx =0;
 
 ETH_HandleTypeDef EthHandle;
-ETH_TxPacketConfig TxConfig; 
-ETH_MACConfigTypeDef MACConfig;
 
 xSemaphoreHandle s_xSemaphore = NULL;
 
@@ -126,30 +125,38 @@ extern uint8_t network_start_flag;
   * @param netif已经初始化了这个以太网的lwip网络接口结构       
   */
 static void low_level_init(struct netif *netif)
-{ 
-  uint32_t idx = 0;
+{
   //mac地址
   uint8_t macaddress[6]= {MAC_ADDR0, MAC_ADDR1, MAC_ADDR2, MAC_ADDR3, MAC_ADDR4, MAC_ADDR5};   
   
-  EthHandle.Instance = ETH;  
-  EthHandle.Init.MACAddr = macaddress;
-  //RMII模式
-  EthHandle.Init.MediaInterface = HAL_ETH_RMII_MODE;
-  //接受描述符
-  EthHandle.Init.RxDesc = DMARxDscrTab;
-  //发送描述符
-  EthHandle.Init.TxDesc = DMATxDscrTab;
-  //数据长度
-  EthHandle.Init.RxBuffLen = ETH_RX_BUFFER_SIZE;
-  
-  /* 配置以太网外设 (GPIOs, clocks, MAC, DMA)*/
-  if(HAL_ETH_Init(&EthHandle) == HAL_ERROR)
+	EthHandle.Instance = ETH;  
+	EthHandle.Init.MACAddr = macaddress;
+	EthHandle.Init.AutoNegotiation = ETH_AUTONEGOTIATION_ENABLE;//使能自协商模式
+	EthHandle.Init.Speed = ETH_SPEED_100M;//网络速率100M
+	EthHandle.Init.DuplexMode = ETH_MODE_FULLDUPLEX;//全双工模式
+	EthHandle.Init.MediaInterface = ETH_MEDIA_INTERFACE_RMII;//RMII接口
+	EthHandle.Init.RxMode = ETH_RXINTERRUPT_MODE;//中断接收模式
+	EthHandle.Init.ChecksumMode = ETH_CHECKSUM_BY_HARDWARE;//硬件帧校验
+	EthHandle.Init.PhyAddress = LAN8720A_PHY_ADDRESS;//PHY地址
+	
+	/* 配置以太网外设 (GPIOs, clocks, MAC, DMA) */
+	if (HAL_ETH_Init(&EthHandle) == HAL_OK)
+	{
+		/* 设置netif链接标志 */
+		netif->flags |= NETIF_FLAG_LINK_UP;
+	}else
+	{
     printf("HAL_ETH_Init ERROR");
-
-
+	}
+	/* 初始化 Tx 描述符列表：链接模式 */
+	HAL_ETH_DMATxDescListInit(&EthHandle, DMATxDscrTab, &Tx_Buff[0][0], ETH_TXBUFNB);
+	 
+	/* 初始化 Rx 描述符列表：链接模式 */
+	HAL_ETH_DMARxDescListInit(&EthHandle, DMARxDscrTab, &Rx_Buff[0][0], ETH_RXBUFNB);
+	
   /* 设置netif MAC 硬件地址长度 */
   netif->hwaddr_len = ETHARP_HWADDR_LEN;
-  
+
   /* 设置netif MAC 硬件地址 */
   netif->hwaddr[0] =  MAC_ADDR0;
   netif->hwaddr[1] =  MAC_ADDR1;
@@ -159,18 +166,10 @@ static void low_level_init(struct netif *netif)
   netif->hwaddr[5] =  MAC_ADDR5;
   
   /* 设置netif最大传输单位 */
-  netif->mtu = ETH_MAX_PAYLOAD;
+  netif->mtu = 1500;
   
   /* 接收广播地址和ARP流量  */
   netif->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP;
-  
-  for(idx = 0; idx < ETH_RX_DESC_CNT; idx ++)
-  {
-    HAL_ETH_DescAssignMemory(&EthHandle, idx, Rx_Buff[idx], NULL);
-    
-    /* Set Custom pbuf free function */
-//    rx_pbuf[idx].custom_free_function = pbuf_free_custom;
-  }
   
   s_xSemaphore = xSemaphoreCreateCounting(40,0);
   
@@ -189,19 +188,7 @@ static void low_level_init(struct netif *netif)
                   
   LWIP_MEMPOOL_INIT(RX_POOL);
   
-  /* 设置发送配置结构体 */
-  memset(&TxConfig, 0 , sizeof(ETH_TxPacketConfig));
-  TxConfig.Attributes = ETH_TX_PACKETS_FEATURES_CSUM | ETH_TX_PACKETS_FEATURES_CRCPAD;
-  //发送校验
-  TxConfig.ChecksumCtrl = ETH_CHECKSUM_IPHDR_PAYLOAD_INSERT_PHDR_CALC;
-  //CRC校验位
-  TxConfig.CRCPadCtrl = ETH_CRC_PAD_INSERT;
-  //初始化LAN8720A
-  if(LAN8720_Init(&EthHandle) == HAL_OK) 
-  {
-      GUI_DEBUG("LAN8720_Init ok\n");
-      ethernet_link_check_state(netif);
-  }
+	HAL_ETH_Start(&EthHandle);
 }
 
 /**
@@ -221,57 +208,81 @@ static void low_level_init(struct netif *netif)
   */
 static err_t low_level_output(struct netif *netif, struct pbuf *p)
 {
-  uint32_t i=0, framelen = 0;
+  err_t errval;
   struct pbuf *q;
-  err_t errval = ERR_OK;
-  
-  ETH_BufferTypeDef Txbuffer[ETH_TX_DESC_CNT];
+  uint8_t *buffer = (uint8_t *)(EthHandle.TxDesc->Buffer1Addr);
+  __IO ETH_DMADescTypeDef *DmaTxDesc;
+  uint32_t framelength = 0;
+  uint32_t bufferoffset = 0;
+  uint32_t byteslefttocopy = 0;
+  uint32_t payloadoffset = 0;
 
-	static sys_sem_t ousem = NULL;
-	if(ousem == NULL)
-  {
-    sys_sem_new(&ousem,0);
-    sys_sem_signal(&ousem);
-  }
+  DmaTxDesc = EthHandle.TxDesc;
+  bufferoffset = 0;
   
-  memset(Txbuffer, 0 , ETH_TX_DESC_CNT*sizeof(ETH_BufferTypeDef));
-  
-  sys_sem_wait(&ousem);
-  
+  /* copy frame from pbufs to driver buffers */
   for(q = p; q != NULL; q = q->next)
   {
-    if(i >= ETH_TX_DESC_CNT)	
-      return ERR_IF;
-    
-    Txbuffer[i].buffer = q->payload;
-    Txbuffer[i].len = q->len;
-    framelen += q->len;
-    
-    if(i>0)
+    /* Is this buffer available? If not, goto error */
+    if((DmaTxDesc->Status & ETH_DMATXDESC_OWN) != (uint32_t)RESET)
     {
-      Txbuffer[i-1].next = &Txbuffer[i];
+      errval = ERR_USE;
+      goto error;
     }
     
-    if(q->next == NULL)
+    /* Get bytes in current lwIP buffer */
+    byteslefttocopy = q->len;
+    payloadoffset = 0;
+    
+    /* Check if the length of data to copy is bigger than Tx buffer size*/
+    while( (byteslefttocopy + bufferoffset) > ETH_TX_BUF_SIZE )
     {
-      Txbuffer[i].next = NULL;
+      /* Copy data to Tx buffer*/
+      memcpy( (uint8_t*)((uint8_t*)buffer + bufferoffset), (uint8_t*)((uint8_t*)q->payload + payloadoffset), (ETH_TX_BUF_SIZE - bufferoffset) );
+      
+      /* Point to next descriptor */
+      DmaTxDesc = (ETH_DMADescTypeDef *)(DmaTxDesc->Buffer2NextDescAddr);
+      
+      /* Check if the buffer is available */
+      if((DmaTxDesc->Status & ETH_DMATXDESC_OWN) != (uint32_t)RESET)
+      {
+        errval = ERR_USE;
+        goto error;
+      }
+      
+      buffer = (uint8_t *)(DmaTxDesc->Buffer1Addr);
+      
+      byteslefttocopy = byteslefttocopy - (ETH_TX_BUF_SIZE - bufferoffset);
+      payloadoffset = payloadoffset + (ETH_TX_BUF_SIZE - bufferoffset);
+      framelength = framelength + (ETH_TX_BUF_SIZE - bufferoffset);
+      bufferoffset = 0;
     }
     
-    i++;
+    /* Copy the remaining bytes */
+    memcpy( (uint8_t*)((uint8_t*)buffer + bufferoffset), (uint8_t*)((uint8_t*)q->payload + payloadoffset), byteslefttocopy );
+    bufferoffset = bufferoffset + byteslefttocopy;
+    framelength = framelength + byteslefttocopy;
   }
 
-  TxConfig.Length = framelen;
-  TxConfig.TxBuffer = Txbuffer;
-
-//  SCB_CleanInvalidateDCache();
+  /* Clean and Invalidate data cache */
+  SCB_CleanInvalidateDCache();   
+  /* Prepare transmit descriptors to give to DMA */ 
+  HAL_ETH_TransmitFrame(&EthHandle, framelength);
   
-  HAL_ETH_Transmit(&EthHandle, &TxConfig, ETH_DMA_TRANSMIT_TIMEOUT);
+  errval = ERR_OK;
   
-
-  sys_sem_signal(&ousem);
+error:
   
+  /* When Transmit Underflow flag is set, clear it and issue a Transmit Poll Demand to resume transmission */
+  if ((EthHandle.Instance->DMASR & ETH_DMASR_TUS) != (uint32_t)RESET)
+  {
+    /* Clear TUS ETHERNET DMA flag */
+    EthHandle.Instance->DMASR = ETH_DMASR_TUS;
+    
+    /* Resume DMA transmission*/
+    EthHandle.Instance->DMATPDR = 0;
+  }
   return errval;
-
 }
 
 /**
@@ -285,28 +296,83 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
 static struct pbuf * low_level_input(struct netif *netif)
 {
   struct pbuf *p = NULL;
-  ETH_BufferTypeDef RxBuff;
-  uint32_t framelength = 0;
+  struct pbuf *q;
+  uint16_t len;
+  uint8_t *buffer;
+  __IO ETH_DMADescTypeDef *dmarxdesc;
+  uint32_t bufferoffset = 0;
+  uint32_t payloadoffset = 0;
+  uint32_t byteslefttocopy = 0;
+  uint32_t i=0;
   
-  struct pbuf_custom* custom_pbuf;
+  if (HAL_ETH_GetReceivedFrame(&EthHandle) != HAL_OK)
+    return NULL;
   
-  /* Clean and Invalidate data cache */
-//  SCB_CleanInvalidateDCache();
+  /* Obtain the size of the packet and put it into the "len" variable. */
+  len = EthHandle.RxFrameInfos.length;
+  buffer = (uint8_t *)EthHandle.RxFrameInfos.buffer;
   
-  if(HAL_ETH_GetRxDataBuffer(&EthHandle, &RxBuff) == HAL_OK) 
+  if (len > 0)
   {
-    HAL_ETH_GetRxDataLength(&EthHandle, &framelength);
-
-    /* Invalidate data cache for ETH Rx Buffers */
-    SCB_InvalidateDCache_by_Addr((uint32_t *)Rx_Buff, (ETH_RX_DESC_CNT*ETH_RX_BUFFER_SIZE));
-    
-    custom_pbuf  = (struct pbuf_custom*)LWIP_MEMPOOL_ALLOC(RX_POOL);
-    custom_pbuf->custom_free_function = pbuf_free_custom;
-    
-    p = pbuf_alloced_custom(PBUF_RAW, framelength, PBUF_REF, custom_pbuf, RxBuff.buffer, ETH_RX_BUFFER_SIZE);
-
+    /* We allocate a pbuf chain of pbufs from the Lwip buffer pool */
+    p = pbuf_alloc(PBUF_RAW, len, PBUF_POOL);
   }
   
+  /* Clean and Invalidate data cache */
+  SCB_CleanInvalidateDCache(); 
+  
+  if (p != NULL)
+  {
+    dmarxdesc = EthHandle.RxFrameInfos.FSRxDesc;
+    bufferoffset = 0;
+    
+    for(q = p; q != NULL; q = q->next)
+    {
+      byteslefttocopy = q->len;
+      payloadoffset = 0;
+      
+      /* Check if the length of bytes to copy in current pbuf is bigger than Rx buffer size */
+      while( (byteslefttocopy + bufferoffset) > ETH_RX_BUF_SIZE )
+      {
+        /* Copy data to pbuf */
+        memcpy( (uint8_t*)((uint8_t*)q->payload + payloadoffset), (uint8_t*)((uint8_t*)buffer + bufferoffset), (ETH_RX_BUF_SIZE - bufferoffset));
+        
+        /* Point to next descriptor */
+        dmarxdesc = (ETH_DMADescTypeDef *)(dmarxdesc->Buffer2NextDescAddr);
+        buffer = (uint8_t *)(dmarxdesc->Buffer1Addr);
+        
+        byteslefttocopy = byteslefttocopy - (ETH_RX_BUF_SIZE - bufferoffset);
+        payloadoffset = payloadoffset + (ETH_RX_BUF_SIZE - bufferoffset);
+        bufferoffset = 0;
+      }
+      
+      /* Copy remaining data in pbuf */
+      memcpy( (uint8_t*)((uint8_t*)q->payload + payloadoffset), (uint8_t*)((uint8_t*)buffer + bufferoffset), byteslefttocopy);
+      bufferoffset = bufferoffset + byteslefttocopy;
+    }
+  }    
+    
+  /* Release descriptors to DMA */
+  /* Point to first descriptor */
+  dmarxdesc = EthHandle.RxFrameInfos.FSRxDesc;
+  /* Set Own bit in Rx descriptors: gives the buffers back to DMA */
+  for (i=0; i< EthHandle.RxFrameInfos.SegCount; i++)
+  {  
+    dmarxdesc->Status |= ETH_DMARXDESC_OWN;
+    dmarxdesc = (ETH_DMADescTypeDef *)(dmarxdesc->Buffer2NextDescAddr);
+  }
+  
+  /* Clear Segment_Count */
+  EthHandle.RxFrameInfos.SegCount =0;
+
+  /* When Rx Buffer unavailable flag is set: clear it and resume reception */
+  if ((EthHandle.Instance->DMASR & ETH_DMASR_RBUS) != (uint32_t)RESET)  
+  {
+    /* Clear RBUS ETHERNET DMA flag */
+    EthHandle.Instance->DMASR = ETH_DMASR_RBUS;
+    /* Resume DMA reception */
+    EthHandle.Instance->DMARPDR = 0;
+  }
   return p;
 }
 
@@ -322,7 +388,6 @@ void ethernetif_input(void *pParams) {
 	struct pbuf *p = NULL;
 	netif = (struct netif*) pParams;
   LWIP_DEBUGF(NETIF_DEBUG, ("ethernetif_input: IP input error\n"));
-  GUI_DEBUG("ethernetif_input running\n");
 	while(1) 
   {
     if(xSemaphoreTake( s_xSemaphore, portMAX_DELAY ) == pdTRUE)
@@ -332,8 +397,8 @@ void ethernetif_input(void *pParams) {
 TRY_GET_NEXT_FRAGMENT:
       p = low_level_input(netif);
       
-      /* Build Rx descriptor to be ready for next data reception */
-      HAL_ETH_BuildRxDescriptors(&EthHandle);
+//      /* Build Rx descriptor to be ready for next data reception */
+//      HAL_ETH_BuildRxDescriptors(&EthHandle);
       
       taskEXIT_CRITICAL();
       /* points to packet payload, which starts with an Ethernet header */
@@ -438,7 +503,7 @@ void pbuf_free_custom(struct pbuf *p)
   */
 void ethernet_link_check_state(struct netif *netif)
 {
-    
+#if 0
     uint32_t PHYLinkState;
     uint32_t linkchanged = 0, speed = 0, duplex =0;
   
@@ -495,6 +560,7 @@ void ethernet_link_check_state(struct netif *netif)
           netif_set_link_up(netif);
       }
     }
+#endif
 }
 
 

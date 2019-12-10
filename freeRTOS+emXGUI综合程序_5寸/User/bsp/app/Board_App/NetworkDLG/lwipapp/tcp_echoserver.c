@@ -42,7 +42,7 @@
 #include "netconf.h"
 #include <stdlib.h>
 #include <string.h>
-#include "./LAN8720A/LAN8720A.h"
+#include "./LAN8720A.h"
 #include "x_libc.h"
 #include "emXGUI.h"
 #include "./NetworkDLG/GUI_Network_Dialog.h"

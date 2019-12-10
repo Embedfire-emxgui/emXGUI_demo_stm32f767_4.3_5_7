@@ -1,7 +1,7 @@
 #ifndef __LAN8720A_H
 #define	__LAN8720A_H
 
-#include "stm32h7xx.h"
+#include "stm32f7xx.h"
 /*
 	ETH_MDIO -------------------------> PA2
 	ETH_MDC --------------------------> PC1
@@ -64,28 +64,28 @@
 /* ETH_RMII_TXD1 */
 #define ETH_RMII_TXD1_GPIO_CLK_ENABLE()     __GPIOG_CLK_ENABLE();
 #define ETH_RMII_TXD1_PORT                  GPIOG
-#define ETH_RMII_TXD1_PIN                   GPIO_PIN_12
+#define ETH_RMII_TXD1_PIN                   GPIO_PIN_14
 #define ETH_RMII_TXD1_AF                    GPIO_AF11_ETH
 
 //MAC地址
-#define MAC_ADDR0   0x02U
-#define MAC_ADDR1   0x00U
-#define MAC_ADDR2   0x00U
-#define MAC_ADDR3   0x00U
-#define MAC_ADDR4   0x00U
-#define MAC_ADDR5   0x00U
+//#define MAC_ADDR0   0x02U
+//#define MAC_ADDR1   0x00U
+//#define MAC_ADDR2   0x00U
+//#define MAC_ADDR3   0x00U
+//#define MAC_ADDR4   0x00U
+//#define MAC_ADDR5   0x00U
 
 #define ETH_RX_BUF_SIZE                ETH_MAX_PACKET_SIZE //接受数据的长度
 #define ETH_TX_BUF_SIZE                ETH_MAX_PACKET_SIZE //发送数据的长度
-#define ETH_RXBUFNB                    ((uint32_t)4)       //要接受数据的个数
-#define ETH_TXBUFNB                    ((uint32_t)4)       //要发送数据的个数
+//#define ETH_RXBUFNB                    ((uint32_t)4)       //要接受数据的个数
+//#define ETH_TXBUFNB                    ((uint32_t)4)       //要发送数据的个数
 
 //LAN8720A的寄存器宏定义 
 //PHY的外设地址
 #define LAN8720A_PHY_ADDRESS            0x00
 //PHY延时时间
-#define PHY_RESET_DELAY                 ((uint32_t)0x00000F)
-#define PHY_CONFIG_DELAY                ((uint32_t)0x00000F)
+//#define PHY_RESET_DELAY                 ((uint32_t)0x00000F)
+//#define PHY_CONFIG_DELAY                ((uint32_t)0x00000F)
 //读写PHY的等待时间
 #define PHY_READ_TO                     ((uint32_t)0x0000FFFF)
 #define PHY_WRITE_TO                    ((uint32_t)0x0000FFFF)
