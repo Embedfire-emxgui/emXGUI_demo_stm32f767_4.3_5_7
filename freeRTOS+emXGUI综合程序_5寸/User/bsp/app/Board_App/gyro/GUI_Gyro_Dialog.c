@@ -1328,7 +1328,7 @@ static LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       u32 jpeg_size;
       JPG_DEC *dec;
       res = RES_Load_Content(GUI_GYRO_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
-    //   res = FS_Load_Content(GUI_GYRO_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+//      res = FS_Load_Content(GUI_GYRO_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
       bk_hdc = CreateMemoryDC(SURF_SCREEN, GUI_XSIZE, GUI_YSIZE);
       if(res)
       {

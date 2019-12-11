@@ -140,8 +140,8 @@ extern WavHead rec_wav;             /* WAV设备  */
 extern FRESULT result; 
 extern UINT bw;            					/* File R/W count */
 extern REC_TYPE Recorder;           /* 录音设备 */
-extern __align(4) uint16_t record_buffer0[RECBUFFER_SIZE]	__attribute__((at(0x24008000)));  /* 数据缓存区1 ，实际占用字节数：RECBUFFER_SIZE*2 */
-extern __align(4) uint16_t record_buffer1[RECBUFFER_SIZE]	__attribute__((at(0x24004000)));  /* 数据缓存区2 ，实际占用字节数：RECBUFFER_SIZE*2 */
+extern __align(4) uint16_t record_buffer0[RECBUFFER_SIZE];  /* 数据缓存区1 ，实际占用字节数：RECBUFFER_SIZE*2 */
+extern __align(4) uint16_t record_buffer1[RECBUFFER_SIZE];  /* 数据缓存区2 ，实际占用字节数：RECBUFFER_SIZE*2 */
 
 static void App_Record(void *p)
 {
@@ -827,7 +827,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 							if (wbuf[0] == L'U')
 							{
                 vTaskSuspend(h_play_record);
-                I2S_Play_Start(); 
+                I2S_Play_Stop(); 
 								SetWindowText(wnd, L"T");
 								EnableWindow(GetDlgItem(hwnd, ID_RECORD_START), ENABLE);      // 使能开始录音按钮
 							}

@@ -235,12 +235,13 @@ uint8_t BSP_QSPI_FastRead(uint8_t* pData, uint32_t ReadAddr, uint32_t Size)
 
   if(Size == 0)
   {
-//    BURN_DEBUG("BSP_QSPI_FastRead Size = 0");
+    printf("BSP_QSPI_FastRead Size = 0");
     return QSPI_OK;
   }
 	/* ≥ı ºªØ∂¡√¸¡Ó */
 	s_command.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
-	s_command.Instruction       = QUAD_INOUT_FAST_READ_CMD;
+//	s_command.Instruction       = QUAD_INOUT_FAST_READ_CMD;
+	s_command.Instruction       = 0xEC;	
 	s_command.AddressMode       = QSPI_ADDRESS_4_LINES;
 	s_command.AddressSize       = QSPI_ADDRESS_32_BITS;
 	s_command.Address           = ReadAddr;

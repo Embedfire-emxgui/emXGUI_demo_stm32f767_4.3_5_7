@@ -1,7 +1,7 @@
 #ifndef __VIDOPLAYER_H
 #define __VIDOPLAYER_H
 
-#include "stm32h7xx.h"
+#include "stm32f7xx.h"
 
 #define  T_vids	 0x6463
 #define  T_auds	 0x7762

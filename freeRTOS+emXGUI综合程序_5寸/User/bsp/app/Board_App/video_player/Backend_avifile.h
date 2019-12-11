@@ -1,7 +1,7 @@
 #ifndef __AVIFILE_H
 #define __AVIFILE_H
 
-#include "stm32h7xx.h"
+#include "stm32f7xx.h"
 #include "ff.h"
 
 //#define DEBUGINFO	//信息打印开关

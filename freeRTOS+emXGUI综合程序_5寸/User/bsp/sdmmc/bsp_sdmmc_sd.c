@@ -251,7 +251,7 @@ void BSP_SD_MspInit(SD_HandleTypeDef *hsd, void *Params)
   HAL_GPIO_Init(GPIOD, &gpio_init_structure);
 
   /* SDIO 中断配置 */
-  HAL_NVIC_SetPriority(SDMMC1_IRQn, 3, 0);
+  HAL_NVIC_SetPriority(SDMMC1_IRQn, 2, 0);
   HAL_NVIC_EnableIRQ(SDMMC1_IRQn);
     
   /* 配置 DMA 接收参数 */

@@ -2241,9 +2241,9 @@ static void SD_DMA_TxCplt(DMA_HandleTypeDef *hdma)
   hsd->DmaTransferCplt = 1;
   
   /* Wait until SD transfer is complete */
-  while(hsd->SdTransferCplt == 0)
-  {
-  }
+//  while(hsd->SdTransferCplt == 0)
+//  {
+//  } 
  
   /* Disable the DMA channel */
   HAL_DMA_Abort(hdma);

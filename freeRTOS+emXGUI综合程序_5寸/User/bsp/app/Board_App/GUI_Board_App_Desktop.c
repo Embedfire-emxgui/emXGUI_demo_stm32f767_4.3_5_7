@@ -48,23 +48,20 @@ static void dummy(void *p)
 {
 
 }
-//extern void GUI_DEMO_DrawJPEG(void);//
-//extern void App_LED_DIALOG(void);//
+
 extern void	GUI_App_Desktop(void);//GUIAPP演示
-//extern void App_GUI_Tutorial_DEMO(void);//GUI演示
+extern void App_GUI_Tutorial_DEMO(void);//GUI演示
 extern void	GUI_MUSICPLAYER_DIALOG(void);//音乐播放器
-//extern void	GUI_VideoPlayer_DIALOG(void);//视频播放器
-//extern void GUI_AVIList_DIALOG(void);//
+extern void	GUI_VideoPlayer_DIALOG(void);//视频播放器
 extern void	GUI_LED_DIALOG(void);//RGB灯
 extern void	GUI_Camera_DIALOG(void);//摄像头
 extern void GUI_Camera_QRCode_DIALOG(void);//二维码
-//extern void	GUI_RES_WRITER_DIALOG(void);//
-//extern void GUI_Boot_Interface_DIALOG(void);//
+extern void	GUI_RES_WRITER_DIALOG(void);//
+extern void GUI_Boot_Interface_DIALOG(void);//
 extern void	GUI_PicViewer_Dialog(void);//图片浏览器
 extern void	GUI_RECORDER_DIALOG(void);//录音
 extern void GUI_T_RH_Dialog(void);//温湿度
 extern void GUI_ADC_CollectVoltage_Dialog(void);//电压采集
-//extern void GUI_Phone_Dialog(void);//电话
 extern void GUI_CLOCK_DIALOG(void);//时钟
 extern void GUI_Gyro_Dialog(void);//陀螺仪
 extern void GUI_Settings_DIALOG(void);//设置
@@ -148,26 +145,26 @@ struct __obj_list menu_list_1[] = {
 
       L"GUI应用",		    NULL, 	L"J", 	RGB_WHITE,		  	(void(*)(void *))GUI_App_Desktop,//GUI_App_Desktop,
 			L"MP3播放器",		  NULL,	  L"I",   RGB_WHITE,			  (void(*)(void *))GUI_MUSICPLAYER_DIALOG,//dummy,
-	//      L"视频播放器",		NULL,	  L"D",   RGB_WHITE,				(void(*)(void *))GUI_VideoPlayer_DIALOG,
+      L"视频播放器",		NULL,	  L"D",   RGB_WHITE,				(void(*)(void *))GUI_VideoPlayer_DIALOG,
       L"时钟",		      NULL,	  L"H",   RGB_WHITE,				(void(*)(void *))GUI_CLOCK_DIALOG,//dummy,
-//				
+				
 			L"陀螺仪",	      NULL,	  L"R", 	RGB_WHITE,			  (void(*)(void *))GUI_Gyro_Dialog,//dummy,
       L"RGB彩灯",	     	NULL,	  L"L",   RGB_WHITE,				(void(*)(void *))GUI_LED_DIALOG,
       L"摄像头",	    	NULL,	  L"M",   RGB_WHITE, 				(void(*)(void *))GUI_Camera_DIALOG,//dummy,
       L"图片浏览器",  	NULL, 	L"G",   RGB_WHITE,				(void(*)(void *))GUI_PicViewer_Dialog,
-//			
+			
       L"温湿度",	      NULL,   L"O",   RGB_WHITE,				(void(*)(void *))GUI_T_RH_Dialog,//dummy,
       L"电压表",		    NULL,	  L"W",   RGB_WHITE,				(void(*)(void *))GUI_ADC_CollectVoltage_Dialog,//dummy,  
 			L"设置",        	NULL,	  L"h",   RGB_WHITE,				(void(*)(void *))GUI_Settings_DIALOG,
 			L"以太网",	     	NULL,	  L"Q",   RGB_WHITE,				(void(*)(void *))GUI_NetworkDLG_Dialog,//dummy,
-//				
-//			L"游戏",        	NULL,	  L"S",   RGB_WHITE,				(void(*)(void *))dummy,
-//      //L"模拟U盘",   	NULL,	  L"N",   RGB_WHITE,				dummy,       
-//      //L"WiFi",	    	NULL,	  L"P",   RGB_WHITE,				dummy,
+				
+			L"游戏",        	NULL,	  L"S",   RGB_WHITE,				(void(*)(void *))dummy,
+      //L"模拟U盘",   	NULL,	  L"N",   RGB_WHITE,				dummy,       
+      //L"WiFi",	    	NULL,	  L"P",   RGB_WHITE,				dummy,
       L"电话",	        NULL, 	L"T",   RGB_WHITE,				(void(*)(void *))GUI_Phone_Dialog,
       L"短信",         	NULL,   L"U",   RGB_WHITE,				(void(*)(void *))GUI_SMS_Dialog,
       L"二维码",       	NULL,	  L"V",   RGB_WHITE,				(void(*)(void *))GUI_Camera_QRCode_DIALOG,//dummy,
-//				
+				
       L"录音机",	      NULL,	  L"Y", 	RGB_WHITE,			  (void(*)(void *))GUI_RECORDER_DIALOG,//dummy,        
       L"基础控件",	    NULL, 	L"D",   RGB_WHITE,				(void(*)(void *))GUI_DEMO_RadiaMenu,
       L"蜂鸣器",	      NULL, 	L"i",   RGB_WHITE,				(void(*)(void *))GUI_Beeper_Dialog,

@@ -169,6 +169,7 @@ void SysTick_Handler(void)
 
 /* 用于统计运行时间 */
 volatile uint32_t CPU_RunTime = 0UL;
+extern volatile uint8_t video_timeout;//视频播放引入
 extern TIM_HandleTypeDef TIM_Base;
 void BASIC_TIM_IRQHandler(void)
 {
@@ -186,7 +187,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
       CPU_RunTime++;
     if(htim->Instance == TIM3)
     {
-//        video_timeout = 1;
+        video_timeout = 1;
 //			  LocalTime+=10;
 //      LED1_TOGGLE;
     }

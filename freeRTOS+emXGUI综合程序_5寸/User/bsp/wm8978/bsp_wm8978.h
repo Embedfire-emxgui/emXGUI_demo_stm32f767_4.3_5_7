@@ -115,6 +115,8 @@ void wm8978_NotchFilter(uint16_t _NFA0, uint16_t _NFA1);
 #define I2Sxext_RX_DMA_STREAM          DMA1_Stream3
 #define I2Sxext_RX_DMA_STREAM_IRQn     DMA1_Stream3_IRQn 
 //#define I2Sxext_RX_DMA_STREAM_IRQFUN	 DMA1_Stream3_IRQHandler
+extern DMA_HandleTypeDef hdma_spi2_tx;
+extern DMA_HandleTypeDef hdma_spi2_rx;
 
 static HAL_StatusTypeDef I2Cx_ReadMultiple(I2C_HandleTypeDef *i2c_handler, uint8_t Addr, uint16_t Reg, uint16_t MemAddSize, uint8_t *Buffer, uint16_t Length);
 static HAL_StatusTypeDef I2Cx_WriteMultiple(I2C_HandleTypeDef *i2c_handler, uint8_t Addr, uint16_t Reg, uint16_t MemAddSize, uint8_t *Buffer, uint16_t Length);

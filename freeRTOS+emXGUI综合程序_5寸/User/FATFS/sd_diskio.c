@@ -157,7 +157,6 @@ DRESULT SD_read(BYTE lun, BYTE *buff, DWORD sector, UINT count)
 {
     DRESULT res = RES_OK;
     uint32_t alignedAddr = 0;
-		BYTE * tempbuf = buff;
 			/* 字节不对齐的情况 */
     if ((DWORD)buff & 3) 
     {
@@ -174,13 +173,8 @@ DRESULT SD_read(BYTE lun, BYTE *buff, DWORD sector, UINT count)
             }
             buff += BLOCK_SIZE;
         }
-//				SCB_InvalidateDCache();
-//				SCB_InvalidateDCache_by_Addr((uint32_t*)tempbuf, count*BLOCK_SIZE + ((uint32_t)tempbuf));
-//	GUI_DEBUG("xxxxxxxxxxxxxxxxSD_read(BYTE lun %d, BYTE *buff = 0x%p, DWORD sector = %ld, UINT count = %d)",lun,buff,sector,count);
-
         return(res);
      }
-//    GUI_MutexLock(mutex_lock,0xffffff);
 
 			/* 字节对齐的情况 */
 		if(BSP_SD_ReadBlocks_DMA((uint32_t*)buff, 
@@ -188,21 +182,12 @@ DRESULT SD_read(BYTE lun, BYTE *buff, DWORD sector, UINT count)
 												 BLOCK_SIZE, 
 												 count) != MSD_OK)
 		{
+			printf("sdcard read error ! \r\n");
 			res = RES_ERROR;
+			return res;
 		}
-		else
-		{	
-//			SCB_InvalidateDCache();
-
-//			alignedAddr = (uint32_t)buff & ~0x1F;
-
-//			SCB_InvalidateDCache_by_Addr((uint32_t*)buff, count*BLOCK_SIZE + ((uint32_t)buff - alignedAddr));
-			SCB_InvalidateDCache_by_Addr((uint32_t*)buff, count*BLOCK_SIZE);
-		}
-		
-//		GUI_MutexUnlock(mutex_lock);
-//	GUI_DEBUG("oooooooooooooooSD_read(BYTE lun %d, BYTE *buff = 0x%p, DWORD sector = %ld, UINT count = %d)",lun,buff,sector,count);
-
+		alignedAddr = (uint32_t)buff & ~0x1F;
+		SCB_InvalidateDCache_by_Addr((uint32_t*)alignedAddr, count*BLOCK_SIZE + ((uint32_t)buff - alignedAddr));
   return res;
 }
 #else
@@ -289,7 +274,7 @@ DRESULT SD_write(BYTE lun, const BYTE *buff, DWORD sector, UINT count)
     {
         res = RES_ERROR;
     }
-  
+		
     return res;
 }   
 #endif /* _USE_WRITE == 1 */

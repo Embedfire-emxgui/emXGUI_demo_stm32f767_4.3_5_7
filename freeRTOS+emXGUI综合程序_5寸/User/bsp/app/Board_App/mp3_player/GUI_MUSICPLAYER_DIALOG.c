@@ -360,13 +360,13 @@ static void App_PlayMusic(HWND hwnd)
          //打开成功，读取歌词文件，分析歌词文件，同时将flag置1，表示文件读取成功
          if((f_result==FR_OK)&&(f_file.fsize<COMDATA_SIZE))
          {					
-//           f_result=f_read(&f_file,ReadBuffer1, sizeof(ReadBuffer1),&f_num);		
-//           if(f_result==FR_OK) 
-//           {  
-//              lyric_analyze(&lrc,ReadBuffer1);
-//              lrc_sequence(&lrc);
-//              lrc.flag = 1;      
-//           }
+           f_result=f_read(&f_file,ReadBuffer1, sizeof(ReadBuffer1),&f_num);		
+           if(f_result==FR_OK) 
+           {  
+              lyric_analyze(&lrc,ReadBuffer1);
+              lrc_sequence(&lrc);
+              lrc.flag = 1;      
+           }
          }
          //打开失败（未找到该歌词文件），则将flag清零，表示没有读取到该歌词文件
          else

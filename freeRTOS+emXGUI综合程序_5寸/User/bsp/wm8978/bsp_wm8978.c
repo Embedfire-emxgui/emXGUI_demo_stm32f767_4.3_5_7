@@ -964,7 +964,6 @@ void BSP_AUDIO_OUT_ClockConfig(I2S_HandleTypeDef *hi2s, uint32_t AudioFreq, void
 	*/
 void I2Sx_Mode_Config(const uint16_t _usStandard,const uint16_t _usWordLen,const uint32_t _usAudioFreq)
 {
-	
 	/* PLL时钟根据AudioFreq设置 (44.1khz vs 48khz groups) */
   BSP_AUDIO_OUT_ClockConfig(&I2S_InitStructure,_usAudioFreq, NULL); /* Clock config is shared between AUDIO IN and OUT */
 
@@ -1032,6 +1031,7 @@ void I2Sx_TX_DMA_Init(const uint32_t buffer0,const uint32_t buffer1,const uint32
 
 	HAL_NVIC_SetPriority(I2Sx_TX_DMA_STREAM_IRQn,2,0);
 	HAL_NVIC_EnableIRQ(I2Sx_TX_DMA_STREAM_IRQn);
+
 }
 
 
@@ -1198,6 +1198,6 @@ void I2Sxext_Recorde_Stop(void)
 
 void I2Sxext_DMAConvCplt(DMA_HandleTypeDef *hdma)
 {
-//	Recorder_I2S_DMA_RX_Callback();
+	MusicPlayer_I2S_DMA_RX_Callback();
 }
 /***************************** (END OF FILE) *********************************/

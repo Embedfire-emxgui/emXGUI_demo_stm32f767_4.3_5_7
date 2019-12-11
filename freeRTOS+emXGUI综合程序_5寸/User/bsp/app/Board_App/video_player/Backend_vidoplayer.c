@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <string.h>
-#include "stm32h7xx.h"
+#include "stm32f7xx.h"
 //#include "ff.h"
 #include "Backend_avifile.h"
 #include "Backend_vidoplayer.h"
-#include "./sai/bsp_sai.h" 
+//#include "./sai/bsp_sai.h" 
 #include "./Bsp/wm8978/bsp_wm8978.h"  
 #include "emXGUI.h"
 #include "emXGUI_JPEG.h"
@@ -18,8 +18,8 @@ UINT      BytesRD;
 uint8_t   *Frame_buf;
 
 static volatile uint8_t audiobufflag=0;
-//__align(4) uint8_t   Sound_buf[4][1024*5]	__attribute__((at(0xd1bc0000)));
-__align(4) uint8_t   Sound_buf[4][1024*5]	__EXRAM;
+__align(4) uint8_t   Sound_buf[4][1024*5]	;//__attribute__((at(0xd1bd0000)));
+//__align(4) uint8_t   Sound_buf[4][1024*5]	__EXRAM;
 
 static uint8_t   *pbuffer;
 
@@ -34,7 +34,7 @@ extern WAVEFORMAT*   wavinfo;
 extern avih_TypeDef* avihChunk;
 //extern HWND avi_wnd_time;
 //extern int avi_chl;
-void MUSIC_SAI_DMA_TX_Callback(void);
+void MUSIC_I2S_DMA_TX_Callback(void);
 
 extern GUI_MUTEX*	AVI_JPEG_MUTEX;    // 用于确保一帧图像用后被释放完在退出线程
 
@@ -115,8 +115,8 @@ void AVI_play(char *filename)
   Strtype=MAKEWORD(pbuffer+mid+6);//流类型（movi后面有两个字符）
   Strsize=MAKEDWORD(pbuffer+mid+8);//流大小
   if(Strsize%2)Strsize++;//奇数加1
-  f_lseek(&fileR,mid+12);//跳过标志ID  
-//  
+  f_lseek(&fileR,(mid+12) &(~0x3f));//跳过标志ID  
+  
   offset=Search_Auds(pbuffer);
   if(offset==0)
   {
@@ -134,7 +134,7 @@ void AVI_play(char *filename)
     audiosize=*(uint8_t *)(mid+offset+4)+256*(*(uint8_t *)(mid+offset+5));
   }
   
-  SAI_Play_Stop();			/* 停止I2S录音和放音 */
+  I2S_Play_Stop();			/* 停止I2S录音和放音 */
 	wm8978_Reset();		/* 复位WM8978到复位状态 */	
   	/* 配置WM8978芯片，输入为DAC，输出为耳机 */
 	wm8978_CfgAudioPath(DAC_ON, SPK_ON|EAR_LEFT_ON | EAR_RIGHT_ON);
@@ -143,18 +143,18 @@ void AVI_play(char *filename)
 	wm8978_SetOUT1Volume(VideoDialog.power);
 
 	/* 配置WM8978音频接口为飞利浦标准I2S接口，16bit */
-	wm8978_CfgAudioIF(SAI_I2S_STANDARD, 16);
-  SAI_GPIO_Config();
-  SAIxA_Tx_Config(SAI_I2S_STANDARD, SAI_PROTOCOL_DATASIZE_16BIT, wavinfo->SampleRate);
-  SAI_DMA_TX_Callback=MUSIC_SAI_DMA_TX_Callback;			//回调函数指wav_i2s_dma_callback
-//  I2S_Play_Stop();
-  SAIA_TX_DMA_Init((uint32_t )Sound_buf[1],(uint32_t )Sound_buf[2],audiosize/2);
+	wm8978_CfgAudioIF(I2S_STANDARD_PHILIPS, 16);
+  I2S_GPIO_Config();
+  I2Sx_Mode_Config(I2S_STANDARD_PHILIPS, I2S_DATAFORMAT_16B, wavinfo->SampleRate);
+  I2S_DMA_TX_Callback=MUSIC_I2S_DMA_TX_Callback;			//回调函数指wav_i2s_dma_callback
+  I2S_Play_Stop();
+  I2Sx_TX_DMA_Init((uint32_t )Sound_buf[1],(uint32_t )Sound_buf[2],audiosize/2);
   audiobufflag=0;	    
   video_timeout=0;
   audiosavebuf=0;
   audiobufflag=0;
-  TIM3_Config((avihChunk->SecPerFrame/100)-1,20000-1);
-  SAI_Play_Start();  
+  TIM3_Config((avihChunk->SecPerFrame/100)-1,9000-1);
+  I2S_Play_Start();  
 	
 	t0= GUI_GetTickCount();
 
@@ -328,7 +328,7 @@ void AVI_play(char *filename)
             pos=fileR.fsize-1024*30;
           }
          
-          f_lseek(&fileR,pos);
+          f_lseek(&fileR,pos&(~0x3f));
 //      
       #if 0
          if(pos == 0)
@@ -382,7 +382,7 @@ void AVI_play(char *filename)
          #endif
          
          if(Strsize%2)Strsize++;//奇数加1
-         f_lseek(&fileR,pos+mid+8);//跳过标志ID  
+         f_lseek(&fileR,(pos+mid+8)&(~0x3f));//跳过标志ID  
          AVI_DEBUG("S Strsize=%d\n",Strsize);
 
          f_read(&fileR,Frame_buf,Strsize+8,&BytesRD);//读入整帧+下一数据流ID信息 
@@ -409,7 +409,8 @@ void AVI_play(char *filename)
   }
   else
     VideoDialog.SWITCH_STATE = 0;
-  SAI_Play_Stop();
+  I2S_Play_Stop();
+  I2S_Stop();		/* 停止I2S录音和放音 */
 	wm8978_Reset();	/* 复位WM8978到复位状态 */
   HAL_TIM_Base_Stop_IT(&TIM3_Handle); //停止定时器3更新中断
   f_close(&fileR);
@@ -417,7 +418,7 @@ void AVI_play(char *filename)
 
 }
 
-void MUSIC_SAI_DMA_TX_Callback(void)
+void MUSIC_I2S_DMA_TX_Callback(void)
 {
   audiobufflag++;
   if(audiobufflag>3)
@@ -428,11 +429,11 @@ void MUSIC_SAI_DMA_TX_Callback(void)
 	if(DMA1_Stream2->CR&(1<<19)) //当前读取Memory1数据
 	{
 		//DMA_MemoryTargetConfig(DMA1_Stream2,(uint32_t)Sound_buf[audiobufflag], DMA_Memory_0);
-    HAL_DMAEx_ChangeMemory(&h_txdma, (uint32_t)Sound_buf[audiobufflag], MEMORY0);
+    HAL_DMAEx_ChangeMemory(&hdma_spi2_tx, (uint32_t)Sound_buf[audiobufflag], MEMORY0);
 	}
 	else
 	{
-    HAL_DMAEx_ChangeMemory(&h_txdma, (uint32_t)Sound_buf[audiobufflag], MEMORY1); 
+    HAL_DMAEx_ChangeMemory(&hdma_spi2_tx, (uint32_t)Sound_buf[audiobufflag], MEMORY1); 
 	} 
 }
 

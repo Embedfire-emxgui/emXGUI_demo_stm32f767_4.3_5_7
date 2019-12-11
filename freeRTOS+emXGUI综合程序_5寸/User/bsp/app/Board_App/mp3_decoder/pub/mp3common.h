@@ -91,7 +91,7 @@ typedef struct _MP3DecInfo {
 	int mainDataBytes;
 
 	int part23Length[MAX_NGRAN][MAX_NCHAN];
-   unsigned char paddingBit; //Õ¼Î»×´Ì¬//note:Ò°»ðÐÞ¸Ä
+
 } MP3DecInfo;
 
 typedef struct _SFBandTable {

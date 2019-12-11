@@ -134,26 +134,25 @@ static void GUI_Thread_Entry(void* parameter)
   * @ 功能说明： 板级外设初始化，所有板子上的初始化均可放在这个函数里面
   * @ 参数    ：   
   * @ 返回值  ： 无
-  *********************************************************************/
-
+  *********************************************************************/	
 static void BSP_Init(void)
-{ 
+{
 	SCB->CACR|=1<<2;   //强制D-Cache透写,如不开启,实际使用中可能遇到各种问题	  
 
 	/* 设置SDRAM为Normal类型,禁用共享, 直写模式*/  
-	Board_MPU_Config(0,MPU_Normal_WT,0xD0000000,MPU_16MB);
-	Board_MPU_Config(1,MPU_Normal_WT,0xD1000000,MPU_8MB);
-	Board_MPU_Config(2,MPU_Normal_WT,0x20020000,MPU_256KB);
-  Board_MPU_Config(3,MPU_Normal_WT,0x20060000,MPU_128KB);
-	Board_MPU_Config(4,MPU_Normal_WT,0x20000000,MPU_128KB);
-//	
-//	MPU_Config();	
-	
+	Board_MPU_Config(0,MPU_Normal_WT,0x08000000,MPU_1MB);
+	Board_MPU_Config(1,MPU_Normal_WT,0xD0000000,MPU_16MB);
+	Board_MPU_Config(2,MPU_Normal_WT,0xD1000000,MPU_8MB);
+	Board_MPU_Config(3,MPU_Normal_WT,0x00000000,MPU_64KB);
+	Board_MPU_Config(4,MPU_Normal_WT,0x20020000,MPU_256KB);
+  Board_MPU_Config(5,MPU_Normal_WT,0x20060000,MPU_128KB);
+	Board_MPU_Config(6,MPU_Normal_WT,0x20000000,MPU_128KB);
+		
   /* Enable I-Cache */
   SCB_EnableICache(); 
   /* Enable D-Cache */
   SCB_EnableDCache();
-	
+
   /* 系统时钟初始化成216MHz */
 	SystemClock_Config();
 	
@@ -185,7 +184,6 @@ static void BSP_Init(void)
 		while (1);	/* 停机 */
 	}
 	printf("WM8978芯片初始化成功\n");
-	
 	MODIFY_REG(FMC_Bank1->BTCR[0],FMC_BCR1_MBKEN,0); //关闭FMC_Bank1,不然LCD会闪.
 
   /*hardfault 跟踪器初始化*/ 
@@ -264,8 +262,8 @@ void SystemClock_Config(void)
     while(1) { ; }
   }  
 	
-  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USART3;
-  PeriphClkInitStruct.Usart3ClockSelection = RCC_USART3CLKSOURCE_PCLK1;
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_UART7;
+  PeriphClkInitStruct.Uart7ClockSelection = RCC_UART7CLKSOURCE_PCLK1;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
 		while(1) { ; }

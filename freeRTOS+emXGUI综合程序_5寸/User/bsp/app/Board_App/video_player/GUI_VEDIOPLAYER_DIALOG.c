@@ -8,7 +8,7 @@
 #include <string.h>
 #include "Backend_vidoplayer.h"
 #include "Backend_avifile.h"
-#include "./sai/bsp_sai.h" 
+//#include "./sai/bsp_sai.h" 
 
 GUI_SEM *Delete_VideoTask_Sem;//做任务同步,结束播放器前先关闭播放任务
 TaskHandle_t VideoTask_Handle;
@@ -721,7 +721,9 @@ static LRESULT video_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
        u32 jpeg_size;
        JPG_DEC *dec;
        VideoDialog.LOAD_STATE = RES_Load_Content(GUI_RGB_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
-       VideoDialog.hdc_bk = CreateMemoryDC(SURF_SCREEN, 800, 480);
+//       VideoDialog.LOAD_STATE = FS_Load_Content(GUI_RGB_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
+
+			VideoDialog.hdc_bk = CreateMemoryDC(SURF_SCREEN, 800, 480);
        if(VideoDialog.LOAD_STATE)
        {
           /* 根据图片数据创建JPG_DEC句柄 */
@@ -808,7 +810,7 @@ static LRESULT video_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 //当音量icon未被按下时
                 if(avi_icon[3].state == FALSE)
                 {
-                   SAI_Play_Start();
+                   I2S_Play_Start();
                    HAL_TIM_Base_Start_IT(&TIM3_Handle);                       
                    
                    SetWindowText(GetDlgItem(hwnd, eID_Vedio_START), L"U");
@@ -817,7 +819,7 @@ static LRESULT video_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 //当音量icon被按下时，暂停
                 else
                 {          
-                   SAI_Play_Stop();
+                   I2S_Play_Stop();
                    HAL_TIM_Base_Stop_IT(&TIM3_Handle);               
                    SetWindowText(GetDlgItem(hwnd, eID_Vedio_START), L"T");
                 }
@@ -1023,7 +1025,8 @@ static LRESULT video_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			GUI_SemWait(Delete_VideoTask_Sem,0xFFFFFFFF);//死等,同步结束播放线程
 			
 			/* 关闭硬件 */
-			SAI_Play_Stop();	
+			I2S_Play_Stop();
+			I2S_Stop();		
       HAL_TIM_Base_Stop_IT(&TIM3_Handle);    
 			vTaskDelete(VideoTask_Handle);
 			

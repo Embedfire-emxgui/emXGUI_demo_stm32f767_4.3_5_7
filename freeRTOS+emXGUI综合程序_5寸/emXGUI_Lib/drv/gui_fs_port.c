@@ -148,7 +148,7 @@ BOOL FileSystem_Init(void)
 	while(1)
 	{
 //    mp3PlayerDemo("0:/MP3文件/BEYOND - 海阔天空.mp3");
-		mp3PlayerDemo("0:/MP3文件/叶炫清-九张机.mp3");		
+		mp3PlayerDemo11("0:/MP3文件/叶炫清-九张机.mp3");		
 	}
 	while(1){;}
 

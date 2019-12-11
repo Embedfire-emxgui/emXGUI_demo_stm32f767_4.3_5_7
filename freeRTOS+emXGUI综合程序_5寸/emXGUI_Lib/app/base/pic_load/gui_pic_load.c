@@ -312,7 +312,7 @@ BOOL PIC_Load_To_SDRAM(void)
 
 
 static HDC Load_png_to_hdc(char *file_name, int w, int h)
-{	 
+{
   BOOL res;
   u8 *pic_buf;
   u32 pic_size;
