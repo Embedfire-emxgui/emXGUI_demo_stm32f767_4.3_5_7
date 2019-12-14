@@ -180,6 +180,16 @@
           <WinNumber>1</WinNumber>
           <ItemText>sysclock,0x0A</ItemText>
         </Ww>
+        <Ww>
+          <count>6</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>avi_icon[3].state</ItemText>
+        </Ww>
+        <Ww>
+          <count>7</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>bsp_result</ItemText>
+        </Ww>
       </WatchWindow1>
       <MemoryWindow1>
         <Mm>
@@ -2817,7 +2827,7 @@
 
   <Group>
     <GroupName>tutorial/mp3</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -3288,7 +3298,7 @@
   </Group>
 
   <Group>
-    <GroupName>MPU_eMPL</GroupName>
+    <GroupName>tutorial/lwip</GroupName>
     <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
@@ -3300,8 +3310,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\User\bsp\app\Board_App\gyro\mpu6050\driver\eMPL\inv_mpu.c</PathWithFileName>
-      <FilenameWithoutPath>inv_mpu.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\User\bsp\app\Board_App\NetworkDLG\GUI_Network_Dialog.c</PathWithFileName>
+      <FilenameWithoutPath>GUI_Network_Dialog.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -3312,14 +3322,46 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+      <PathWithFileName>..\..\User\bsp\app\Board_App\NetworkDLG\bsp\LAN8720A\LAN8720A.c</PathWithFileName>
+      <FilenameWithoutPath>LAN8720A.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+  </Group>
+
+  <Group>
+    <GroupName>MPU_eMPL</GroupName>
+    <tvExp>0</tvExp>
+    <tvExpOptDlg>0</tvExpOptDlg>
+    <cbSel>0</cbSel>
+    <RteFlg>0</RteFlg>
+    <File>
+      <GroupNumber>36</GroupNumber>
+      <FileNumber>233</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\User\bsp\app\Board_App\gyro\mpu6050\driver\eMPL\inv_mpu.c</PathWithFileName>
+      <FilenameWithoutPath>inv_mpu.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>36</GroupNumber>
+      <FileNumber>234</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\bsp\app\Board_App\gyro\mpu6050\driver\eMPL\inv_mpu_dmp_motion_driver.c</PathWithFileName>
       <FilenameWithoutPath>inv_mpu_dmp_motion_driver.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>35</GroupNumber>
-      <FileNumber>233</FileNumber>
+      <GroupNumber>36</GroupNumber>
+      <FileNumber>235</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -3330,8 +3372,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>35</GroupNumber>
-      <FileNumber>234</FileNumber>
+      <GroupNumber>36</GroupNumber>
+      <FileNumber>236</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -3350,8 +3392,8 @@
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
     <File>
-      <GroupNumber>36</GroupNumber>
-      <FileNumber>235</FileNumber>
+      <GroupNumber>37</GroupNumber>
+      <FileNumber>237</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -3362,8 +3404,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>36</GroupNumber>
-      <FileNumber>236</FileNumber>
+      <GroupNumber>37</GroupNumber>
+      <FileNumber>238</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -3374,8 +3416,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>36</GroupNumber>
-      <FileNumber>237</FileNumber>
+      <GroupNumber>37</GroupNumber>
+      <FileNumber>239</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -3386,8 +3428,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>36</GroupNumber>
-      <FileNumber>238</FileNumber>
+      <GroupNumber>37</GroupNumber>
+      <FileNumber>240</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -3398,8 +3440,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>36</GroupNumber>
-      <FileNumber>239</FileNumber>
+      <GroupNumber>37</GroupNumber>
+      <FileNumber>241</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -3410,8 +3452,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>36</GroupNumber>
-      <FileNumber>240</FileNumber>
+      <GroupNumber>37</GroupNumber>
+      <FileNumber>242</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -3422,8 +3464,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>36</GroupNumber>
-      <FileNumber>241</FileNumber>
+      <GroupNumber>37</GroupNumber>
+      <FileNumber>243</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -3434,8 +3476,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>36</GroupNumber>
-      <FileNumber>242</FileNumber>
+      <GroupNumber>37</GroupNumber>
+      <FileNumber>244</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -3446,8 +3488,8 @@
       <bShared>0</bShared>
     </File>
     <File>
-      <GroupNumber>36</GroupNumber>
-      <FileNumber>243</FileNumber>
+      <GroupNumber>37</GroupNumber>
+      <FileNumber>245</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -3466,46 +3508,14 @@
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
     <File>
-      <GroupNumber>37</GroupNumber>
-      <FileNumber>244</FileNumber>
+      <GroupNumber>38</GroupNumber>
+      <FileNumber>246</FileNumber>
       <FileType>4</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\bsp\app\Board_App\gyro\mpu6050\mpl\libmpllib_Keil_M4FP\libmpllib.lib</PathWithFileName>
       <FilenameWithoutPath>libmpllib.lib</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-  </Group>
-
-  <Group>
-    <GroupName>tutorial/lwip</GroupName>
-    <tvExp>0</tvExp>
-    <tvExpOptDlg>0</tvExpOptDlg>
-    <cbSel>0</cbSel>
-    <RteFlg>0</RteFlg>
-    <File>
-      <GroupNumber>38</GroupNumber>
-      <FileNumber>245</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\..\User\bsp\app\Board_App\NetworkDLG\GUI_Network_Dialog.c</PathWithFileName>
-      <FilenameWithoutPath>GUI_Network_Dialog.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>38</GroupNumber>
-      <FileNumber>246</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\..\User\bsp\app\Board_App\NetworkDLG\bsp\LAN8720A\LAN8720A.c</PathWithFileName>
-      <FilenameWithoutPath>LAN8720A.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

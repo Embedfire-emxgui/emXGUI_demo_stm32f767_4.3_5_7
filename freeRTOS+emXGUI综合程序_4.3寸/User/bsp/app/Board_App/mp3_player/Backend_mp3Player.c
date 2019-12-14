@@ -545,7 +545,7 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc, HWND hwnd)
 		mp3player.ucStatus = STA_IDLE;  /* 开始设置为空闲状态  */
 	}
 //	Recorder.ucFmtIdx=3;            /* 缺省飞利浦I2S标准，16bit数据长度，44K采样率  */
-//	Recorder.ucVolume=vol;          /* 缺省耳机音量  */
+	Recorder.ucVolume=vol;          /* 缺省耳机音量  */
    
   DWORD pos;//记录文字变量
   static uint8_t lyriccount=0;//歌词index记录   
@@ -584,7 +584,7 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc, HWND hwnd)
       result = f_read(&MP3_file,(uint16_t *)buffer0,RECBUFFER_SIZE*2,&bw);
       result = f_read(&MP3_file,(uint16_t *)buffer1,RECBUFFER_SIZE*2,&bw);
       
-//      Delay_ms(10);	/* 延迟一段时间，等待I2S中断结束 */			
+      Delay_ms(10);	/* 延迟一段时间，等待I2S中断结束 */			
 			I2S_Play_Stop();
       wm8978_Reset();		/* 复位WM8978到复位状态 */	
       wm8978_CtrlGPIO1(1);
@@ -606,7 +606,7 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc, HWND hwnd)
       }
      
       /* 调节音量，左右相同音量 30*/
-//      wm8978_SetOUT1Volume(Recorder.ucVolume);
+      wm8978_SetOUT1Volume(Recorder.ucVolume);
       /* 配置WM8978音频接口为飞利浦标准I2S接口，16bit */
 			wm8978_CfgAudioIF(SAI_I2S_STANDARD, 16);  
       

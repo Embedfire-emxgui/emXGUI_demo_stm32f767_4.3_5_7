@@ -1751,6 +1751,21 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>tutorial/lwip</GroupName>
+          <Files>
+            <File>
+              <FileName>GUI_Network_Dialog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp\app\Board_App\NetworkDLG\GUI_Network_Dialog.c</FilePath>
+            </File>
+            <File>
+              <FileName>LAN8720A.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp\app\Board_App\NetworkDLG\bsp\LAN8720A\LAN8720A.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>MPU_eMPL</GroupName>
           <Files>
             <File>
@@ -1832,21 +1847,6 @@
               <FileName>libmpllib.lib</FileName>
               <FileType>4</FileType>
               <FilePath>..\..\User\bsp\app\Board_App\gyro\mpu6050\mpl\libmpllib_Keil_M4FP\libmpllib.lib</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>tutorial/lwip</GroupName>
-          <Files>
-            <File>
-              <FileName>GUI_Network_Dialog.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\app\Board_App\NetworkDLG\GUI_Network_Dialog.c</FilePath>
-            </File>
-            <File>
-              <FileName>LAN8720A.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\bsp\app\Board_App\NetworkDLG\bsp\LAN8720A\LAN8720A.c</FilePath>
             </File>
           </Files>
         </Group>

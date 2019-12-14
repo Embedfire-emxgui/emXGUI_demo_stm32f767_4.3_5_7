@@ -1068,7 +1068,6 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
              {
                 case SBN_THUMBTRACK: //R滑块移动
                 {
-                   uint16_t power;
                    power= sb_nr->nTrackValue; //得到当前的音量值
                    if(power == 0) 
                    {
