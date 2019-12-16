@@ -13,7 +13,6 @@
 GUI_SEM *Delete_VideoTask_Sem;//做任务同步,结束播放器前先关闭播放任务
 TaskHandle_t VideoTask_Handle;
 extern volatile uint8_t video_timeout;//视频播放引入
-
 VIDEO_DIALOG_Typedef VideoDialog;
 static SCROLLINFO video_sif_time;/*设置进度条的参数*/
 char avi_playlist[20][100];//播放List
@@ -843,6 +842,11 @@ static LRESULT video_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 VideoDialog.avi_chl = 1;//滑动标志
              }
              break;
+						 case SBN_CLICKED://松手检测,调整进度条使用
+						 {
+								chgsch_TouchUp = 1;
+						 }
+						 break;
           }
        }
       if(id==eID_Vedio_List && code==BN_CLICKED)

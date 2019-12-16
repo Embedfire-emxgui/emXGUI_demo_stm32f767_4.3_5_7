@@ -485,22 +485,21 @@ void mp3PlayerDemo(HWND hwnd,const char *mp3file, uint8_t vol,uint8_t vol_horn, 
          }
          else
          {
-           uint8_t temp=0;	
-               
-           //根据进度条调整播放位置				
-           temp=SendMessage(music_wnd_time, SBM_GETVALUE, NULL, NULL);        
-					 GUI_DEBUG("SendMessage temp : %d",temp);
-           //计算进度条表示的时间
-           time_sum = (float)alltime/255*temp*1000;  	
-					 					 GUI_DEBUG(" temp : %d",time_sum);
-
-           //根据时间计算文件位置并跳转至该位置
-           pos = ID3V2_size + (time_sum/26)*frame_size;
-					 				 					 GUI_DEBUG(" pos : %ld",pos);
-           result = f_lseek(&MP3_file,pos& ~0x3f);
-           lrc.oldtime=0;
-           lyriccount=0;
-           chgsch=0;           
+					 if(chgsch_TouchUp == 1)
+					 {
+						 uint8_t temp=0;
+						 //根据进度条调整播放位置				
+						 temp=SendMessage(music_wnd_time, SBM_GETVALUE, NULL, NULL);        
+						 //计算进度条表示的时间
+						 time_sum = (float)alltime/255*temp*1000;  	
+						 //根据时间计算文件位置并跳转至该位置
+						 pos = ID3V2_size + (time_sum/26)*frame_size;
+						 result = f_lseek(&MP3_file,pos& ~0x3f);
+						 lrc.oldtime=0;
+						 lyriccount=0;
+						 chgsch=0;      
+						 chgsch_TouchUp = 0;
+					 }
          }
 		}
 		Isread=0;
@@ -646,21 +645,25 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc, HWND hwnd)
          } 
          else
          {
-           uint8_t temp=0;
-          
-           temp=SendMessage(music_wnd_time, SBM_GETVALUE, NULL, NULL);  
-           pos=MP3_file.fsize/255*temp;
-           if(pos<sizeof(WavHead))pos=sizeof(WavHead);
-           if(rec_wav.wBitsPerSample==24)temp=12;
-           else temp=8;
-           if((pos-sizeof(WavHead))%temp)
-           {
-             pos+=temp-(pos-sizeof(WavHead))%temp;
-           }        
-           f_lseek(&MP3_file,pos& (~0x3f));
-           lrc.oldtime=0;
-           lyriccount=0;
-           chgsch=0;         
+					 if(chgsch_TouchUp == 1)
+					 {
+						 uint8_t temp=0;
+						
+						 temp=SendMessage(music_wnd_time, SBM_GETVALUE, NULL, NULL);  
+						 pos=MP3_file.fsize/255*temp;
+						 if(pos<sizeof(WavHead))pos=sizeof(WavHead);
+						 if(rec_wav.wBitsPerSample==24)temp=12;
+						 else temp=8;
+						 if((pos-sizeof(WavHead))%temp)
+						 {
+							 pos+=temp-(pos-sizeof(WavHead))%temp;
+						 }        
+						 f_lseek(&MP3_file,pos& (~0x3f));
+						 lrc.oldtime=0;
+						 lyriccount=0;
+						 chgsch=0; 
+						 chgsch_TouchUp = 0;
+	  			 }					 
          }
          timecount++;
          if(bufflag==0)

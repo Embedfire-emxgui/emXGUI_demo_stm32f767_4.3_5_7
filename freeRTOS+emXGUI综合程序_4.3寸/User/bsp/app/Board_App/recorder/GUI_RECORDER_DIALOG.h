@@ -58,6 +58,7 @@ typedef struct{
    record_id_t id;      // °´Å¥ID
 }recorder_icon_t;
 
+extern uint8_t chgsch_TouchUp;
 // typedef __packed struct 
 // { 
 // 	uint8_t 	indexsize; 	

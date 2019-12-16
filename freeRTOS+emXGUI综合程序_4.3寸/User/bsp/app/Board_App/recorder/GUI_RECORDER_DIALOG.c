@@ -1106,6 +1106,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                    //置位进度条变更位置
                    chgsch = 1;
                 }
+                break;								
+								case SBN_CLICKED://松手检测,调整进度条使用
+								 {
+										chgsch_TouchUp = 1;
+								 }
                 break;
              }
           }         

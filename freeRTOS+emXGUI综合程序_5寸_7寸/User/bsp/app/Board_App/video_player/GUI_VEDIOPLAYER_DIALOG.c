@@ -877,6 +877,11 @@ static LRESULT video_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 VideoDialog.avi_chl = 1;//滑动标志
              }
              break;
+						 case SBN_CLICKED://松手检测,调整进度条使用
+						 {
+								chgsch_TouchUp = 1;
+						 }
+						 break;
           }
        }
       if(id==eID_Vedio_List && code==BN_CLICKED)

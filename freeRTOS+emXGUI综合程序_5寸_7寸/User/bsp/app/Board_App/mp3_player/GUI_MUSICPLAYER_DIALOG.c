@@ -38,6 +38,7 @@ int IsCreateList = 0;
 int time2exit = 0;
 static COLORREF color_bg;//透明控件的背景颜色
 uint8_t chgsch=0; //调整进度条标志位
+uint8_t chgsch_TouchUp=0; //调整进度条完毕松手标志位
 char music_name[FILE_NAME_LEN] __EXRAM;//歌曲名数组
 //文件系统相关变量
 FRESULT f_result; 
@@ -1310,6 +1311,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                   //置位进度条变更位置
                   chgsch = 1;
                }
+               break;
+							 case SBN_CLICKED://松手检测,调整进度条使用
+							 {
+									chgsch_TouchUp = 1;
+							 }
                break;
             }
          }              

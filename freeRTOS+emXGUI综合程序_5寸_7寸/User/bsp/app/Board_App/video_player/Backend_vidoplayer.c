@@ -316,6 +316,8 @@ void AVI_play(char *filename)
     }
     else
     {
+			if(chgsch_TouchUp == 1)
+			 {
          pos = fileR.fptr;
          //根据进度条调整播放位置				
          tmp=SendMessage(VideoDialog.SBN_TIMER_Hwnd, SBM_GETVALUE, NULL, NULL); 
@@ -329,46 +331,7 @@ void AVI_play(char *filename)
           }
          
           f_lseek(&fileR,pos&(~0x3f));
-//      
-      #if 0
-         if(pos == 0)
-            mid=Search_Movi(Frame_buf);//寻找movi ID  判断自己是不是还在数据段
-         else 
-            mid = 0;  
-        int iiii= 0;//计算偏移量
-         while(1)
-         {
-            //每次读512个字节，直到找到数据帧的帧头
-            u16 temptt = 0;//计算数据帧的位置
-            AVI_DEBUG("S\n");
 
-            f_read(&fileR,Frame_buf,512,&BytesRD);
-            AVI_DEBUG("E\n");
-
-            temptt = Search_Fram(Frame_buf,BytesRD);
-            iiii++;
-            if(temptt)
-            {            
-               AVI_DEBUG("S temptt =%d\n",temptt);
-               AVI_DEBUG("S Frame_buf[temptt] =%c %c %c %c\n",
-                                      Frame_buf[temptt],
-                                      Frame_buf[temptt+1],
-                                      Frame_buf[temptt+2],
-                                      Frame_buf[temptt+3]);
-               /* 多读取512数据，防止标志在边界时出错 */
-               f_read(&fileR,(u8*)Frame_buf+BytesRD,512,&BytesRD);
-               AVI_DEBUG("E\n");
-                pbuffer = Frame_buf;
-               Strtype=MAKEWORD(pbuffer+temptt+2);//流类型
-               Strsize=MAKEDWORD(pbuffer+temptt+4);//流大小
-               mid += temptt + 512*iiii-512;//加上偏移量
-//               if(temptt == 16)
-//                  continue;
-               break;
-            }
-
-         }
-         #else
          f_read(&fileR,Frame_buf,1024*30,&BytesRD);
          AVI_DEBUG("E\n");
          if(pos == 0)
@@ -379,7 +342,7 @@ void AVI_play(char *filename)
          pbuffer = Frame_buf;
          Strtype=MAKEWORD(pbuffer+mid+2);//流类型
          Strsize=MAKEDWORD(pbuffer+mid+4);//流大小
-         #endif
+
          
          if(Strsize%2)Strsize++;//奇数加1
          f_lseek(&fileR,(pos+mid+8)&(~0x3f));//跳过标志ID  
@@ -387,8 +350,10 @@ void AVI_play(char *filename)
 
          f_read(&fileR,Frame_buf,Strsize+8,&BytesRD);//读入整帧+下一数据流ID信息 
          
-//         
+
          VideoDialog.avi_chl = 0;    
+				 chgsch_TouchUp = 0;
+			 }
      }
          //判断下一帧的帧内容 
          Strtype=MAKEWORD(pbuffer+Strsize+2);//流类型
