@@ -308,7 +308,7 @@ static void i2c_Delay(void)
 		循环次数为30时，SCL频率 = 533KHz，  
 	 	循环次数为20时，SCL频率 = 727KHz， 
   */
-	for (i = 0; i < 10*10; i++);
+	for (i = 0; i < 10*8; i++);
 }
 
 /*
@@ -510,14 +510,6 @@ uint32_t I2C_ReadBytes(uint8_t ClientAddr,uint8_t* pBuffer, uint16_t NumByteToRe
 
 	while(NumByteToRead) 
   {
-   if(NumByteToRead == 1)
-    {
-			i2c_NAck();	/* 最后1个字节读完后，CPU产生NACK信号(驱动SDA = 1) */
-      
-      /* 发送I2C总线停止信号 */
-      i2c_Stop();
-    }
-    
    *pBuffer = i2c_ReadByte();
     
     /* 读指针自增 */
@@ -526,7 +518,10 @@ uint32_t I2C_ReadBytes(uint8_t ClientAddr,uint8_t* pBuffer, uint16_t NumByteToRe
     /*计数器自减 */
     NumByteToRead--;
     
-    i2c_Ack();	/* 中间字节读完后，CPU产生ACK信号(驱动SDA = 0) */  
+    if(NumByteToRead == 0)
+			i2c_NAck();	/* 最后1个字节读完后，CPU产生NACK信号(驱动SDA = 1) */
+    else
+      i2c_Ack();	/* 中间字节读完后，CPU产生ACK信号(驱动SDA = 0) */  
   }
 
 	/* 发送I2C总线停止信号 */
@@ -587,7 +582,7 @@ uint32_t I2C_WriteBytes(uint8_t ClientAddr,uint8_t* pBuffer,  uint8_t NumByteToW
     goto cmd_fail;	/* 器件无应答 */
   }
   
-      pBuffer++;	/* 地址增1 */		
+    pBuffer++;	/* 地址增1 */		
   }
 	
 	/* 命令执行成功，发送I2C总线停止信号 */

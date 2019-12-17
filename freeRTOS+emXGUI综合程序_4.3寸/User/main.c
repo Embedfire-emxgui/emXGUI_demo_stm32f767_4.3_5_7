@@ -143,8 +143,9 @@ static void BSP_Init(void)
 
 	/* 设置SDRAM为Normal类型,禁用共享, 直写模式*/  
 	Board_MPU_Config(0,MPU_Normal_WT,0x08000000,MPU_1MB);
-	Board_MPU_Config(1,MPU_Normal_WT,0xD0000000,MPU_16MB);
+	Board_MPU_Config(1,MPU_Normal_WT,0xD0000000,MPU_16MB);//GUI虚拟内存(动态分配)
 	Board_MPU_Config(2,MPU_Normal_WT,0xD1000000,MPU_8MB);
+	Board_MPU_Config(3,MPU_Normal_WT,0xD1BC0000,MPU_256KB);//HEAP空间
 	Board_MPU_Config(4,MPU_Normal_WT,0x20000000,MPU_512KB);
 		
   /* Enable I-Cache */

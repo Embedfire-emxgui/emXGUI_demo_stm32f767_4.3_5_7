@@ -69,6 +69,7 @@ typedef enum
 	GT9157=0,
 	GT911=1,
   GT5688=2,
+  GT917S=3,
 }TOUCH_IC;
 
 extern TOUCH_IC touchIC;
@@ -139,7 +140,7 @@ extern const TOUCH_PARAM_TypeDef touch_param[];
 #define GTP_READ_COOR_ADDR    0x814E
 #define GTP_REG_SLEEP         0x8040
 #define GTP_REG_SENSOR_ID     0x814A
-#define GTP_REG_CONFIG_DATA   0x8047
+#define GTP_REG_CONFIG_DATA   0x8050
 #define GTP_REG_VERSION       0x8140
 
 #define RESOLUTION_LOC        3

@@ -81,7 +81,8 @@ static void BSP_Init(void);
 int main(void)
 {	
   BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
-  
+   
+	BusClock_Config();
   /* 开发板硬件初始化 */
   BSP_Init();  
   
@@ -141,12 +142,10 @@ static void BSP_Init(void)
 
 	/* 设置SDRAM为Normal类型,禁用共享, 直写模式*/  
 	Board_MPU_Config(0,MPU_Normal_WT,0x08000000,MPU_1MB);
-	Board_MPU_Config(1,MPU_Normal_WT,0xD0000000,MPU_16MB);
+	Board_MPU_Config(1,MPU_Normal_WT,0xD0000000,MPU_16MB);//GUI虚拟内存Cache
 	Board_MPU_Config(2,MPU_Normal_WT,0xD1000000,MPU_8MB);
-	Board_MPU_Config(3,MPU_Normal_WT,0x00000000,MPU_64KB);
-	Board_MPU_Config(4,MPU_Normal_WT,0x20020000,MPU_256KB);
-  Board_MPU_Config(5,MPU_Normal_WT,0x20060000,MPU_128KB);
-	Board_MPU_Config(6,MPU_Normal_WT,0x20000000,MPU_128KB);
+	Board_MPU_Config(3,MPU_Normal_WT,0xD1BC0000,MPU_256KB);//堆区Cache
+	Board_MPU_Config(4,MPU_Normal_WT,0x20000000,MPU_512KB);
 		
   /* Enable I-Cache */
   SCB_EnableICache(); 
@@ -154,7 +153,7 @@ static void BSP_Init(void)
   SCB_EnableDCache();
 
   /* 系统时钟初始化成216MHz */
-	SystemClock_Config();
+//	SystemClock_Config();
 	
   HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
@@ -167,7 +166,7 @@ static void BSP_Init(void)
 	LED_GPIO_Config();
   
   /* SDRAM 初始化 */
-  SDRAM_Init();
+//  SDRAM_Init();
 	
 	/* usart 端口初始化 */
   Debug_USART_Config();
@@ -243,6 +242,47 @@ void SystemClock_Config(void)
   {
     while(1) { ; }
   }
+  
+  /* 选择PLLCLK作为SYSCLK，并配置 HCLK, PCLK1 and PCLK2 的时钟分频因子 
+	 * SYSCLK = PLLCLK     = 216M
+	 * HCLK   = SYSCLK / 1 = 216M
+	 * PCLK2  = SYSCLK / 2 = 108M
+	 * PCLK1  = SYSCLK / 4 = 54M
+	 */
+  RCC_ClkInitStruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;  
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2; 
+  
+  ret = HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_7);
+  if(ret != HAL_OK)
+  {
+    while(1) { ; }
+  }  
+	
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_UART7;
+  PeriphClkInitStruct.Uart7ClockSelection = RCC_UART7CLKSOURCE_PCLK1;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+  {
+		while(1) { ; }
+  }
+}
+
+/*
+	* 使用外部SDRAM作为堆区,得先初始化SDRAM,故在.S文件里初始化系统时钟和总线时钟。
+	* 但跳转从.S跳转回main中时,总线时钟会被重新初始化,所以再初始化一遍确保时钟正确。
+	*/
+void BusClock_Config(void)
+{
+	RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+	RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
+
+  HAL_StatusTypeDef ret = HAL_OK;
+
+  /* 使能HSE，配置HSE为PLL的时钟源，配置PLL的各种分频因子M N P Q 
+	 * PLLCLK = HSE/M*N/P = 25M / 25 *432 / 2 = 216M
+	 */
   
   /* 选择PLLCLK作为SYSCLK，并配置 HCLK, PCLK1 and PCLK2 的时钟分频因子 
 	 * SYSCLK = PLLCLK     = 216M

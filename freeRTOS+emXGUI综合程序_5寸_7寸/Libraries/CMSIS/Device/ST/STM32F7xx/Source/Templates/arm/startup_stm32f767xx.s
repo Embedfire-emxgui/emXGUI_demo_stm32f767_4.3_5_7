@@ -56,7 +56,7 @@ __initial_sp
 ;   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
 
-Heap_Size       EQU     0x00008000
+Heap_Size       EQU     0x000030000
 
                 AREA    HEAP, NOINIT, READWRITE, ALIGN=3
 __heap_base
@@ -211,10 +211,16 @@ __Vectors_Size  EQU  __Vectors_End - __Vectors
 Reset_Handler    PROC
                  EXPORT  Reset_Handler             [WEAK]
                  IMPORT  SystemInit
+				 IMPORT  SDRAM_Init
+				 IMPORT	 SystemClock_Config
                  IMPORT  __main
 
                  LDR     R0, =SystemInit
                  BLX     R0
+                 LDR     R0, =SystemClock_Config;初始时钟
+                 BLX     R0	
+                 LDR     R0, =SDRAM_Init;初始化SDRAM
+                 BLX     R0	
                  LDR     R0, =__main
                  BX      R0
                  ENDP

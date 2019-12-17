@@ -3,7 +3,8 @@
 
 #include "stm32f7xx_hal.h"
 
-static void SystemClock_Config(void);
+void SystemClock_Config(void);
+void BusClock_Config(void);
 
 #endif /* __MAIN_H */
 

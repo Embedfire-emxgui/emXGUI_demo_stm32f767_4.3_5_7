@@ -16,13 +16,16 @@ LR_IROM1 0x08000000 0x00100000  {    ; load region size_region
    sd_diskio.o (+RW +ZI)
    
   }
-  RW_IRAM2 0x20000000 0x00020000  {	 ; 未使能cache区域
+  RW_IRAM2 0x20000000 0x00020000  {	 ;
    .ANY (+RW +ZI)
   }
   
-  RW_ERAM1 (0xD1BC0000) 0x00200000 {  ; 外部SDRAM未使能cache区域  //100000
-  *.o (HEAP)      ;    选择堆区
+  RW_ERAM1 (0xD1C00000) 0x00400000 {  ; 外部SDRAM未使能cache区域,4M  //
    .ANY (EXRAM)				;选择EXRAM节区
+  }
+  
+  HEAP_RAM (0xD1BC0000) 0x00040000{
+    *.o (HEAP)      ;    选择堆区
   }
 }
 

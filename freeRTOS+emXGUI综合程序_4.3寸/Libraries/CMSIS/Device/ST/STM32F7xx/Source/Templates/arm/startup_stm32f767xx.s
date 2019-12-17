@@ -56,7 +56,7 @@ __initial_sp
 ;   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
 
-Heap_Size       EQU     0x000100000;在分散加载文件中指定在外部SDRAM
+Heap_Size       EQU     0x00040000;在分散加载文件中指定在外部SDRAM
 
                 AREA    HEAP, NOINIT, READWRITE, ALIGN=3
 __heap_base		
