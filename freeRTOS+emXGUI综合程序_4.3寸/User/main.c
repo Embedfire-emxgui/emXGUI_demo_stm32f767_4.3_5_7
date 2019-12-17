@@ -145,11 +145,7 @@ static void BSP_Init(void)
 	Board_MPU_Config(0,MPU_Normal_WT,0x08000000,MPU_1MB);
 	Board_MPU_Config(1,MPU_Normal_WT,0xD0000000,MPU_16MB);
 	Board_MPU_Config(2,MPU_Normal_WT,0xD1000000,MPU_8MB);
-//	Board_MPU_Config(1,MPU_Normal_WT,0xD0000000,MPU_32MB);
-	Board_MPU_Config(3,MPU_Normal_WT,0x00000000,MPU_64KB);
-	Board_MPU_Config(4,MPU_Normal_WT,0x20020000,MPU_256KB);
-  Board_MPU_Config(5,MPU_Normal_WT,0x20060000,MPU_128KB);
-	Board_MPU_Config(6,MPU_Normal_WT,0x20000000,MPU_128KB);
+	Board_MPU_Config(4,MPU_Normal_WT,0x20000000,MPU_512KB);
 		
   /* Enable I-Cache */
   SCB_EnableICache(); 

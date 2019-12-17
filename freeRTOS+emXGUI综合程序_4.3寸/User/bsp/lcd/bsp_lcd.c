@@ -367,7 +367,7 @@ void LCD_Init(uint32_t fb_addr, int lcd_clk_mhz, uint32_t pixel_format )
     /* LTDC clock frequency = PLLLCDCLK / LTDC_PLLSAI_DIVR_4 = 96/4 = 24Mhz */
     periph_clk_init_struct.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
     periph_clk_init_struct.PLLSAI.PLLSAIN = 192;
-    periph_clk_init_struct.PLLSAI.PLLSAIR = 2;
+    periph_clk_init_struct.PLLSAI.PLLSAIR = 4;
     periph_clk_init_struct.PLLSAIDivR = RCC_PLLSAIDIVR_4;
     HAL_RCCEx_PeriphCLKConfig(&periph_clk_init_struct);
     /* 初始化LCD的像素宽度和高度 */

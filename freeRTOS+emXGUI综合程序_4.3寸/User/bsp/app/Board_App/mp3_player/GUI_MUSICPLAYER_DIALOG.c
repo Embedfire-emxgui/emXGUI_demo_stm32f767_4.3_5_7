@@ -875,11 +875,11 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
                       225,38,249,25,hwnd,ID_TB5,NULL,NULL);
 
          CreateWindow(BUTTON,L"00:00",WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE,
-                      331,242,43,17,hwnd,ID_TB1,NULL,NULL);
+                      331,237,43,17,hwnd,ID_TB1,NULL,NULL);
      
 
          CreateWindow(BUTTON,L"00:00",WS_TRANSPARENT|WS_OWNERDRAW|WS_VISIBLE,
-                       118,242,43,17,hwnd,ID_TB2,NULL,NULL);
+                       118,237,43,17,hwnd,ID_TB2,NULL,NULL);
     
          //获取音乐列表
          scan_files(path);
@@ -904,7 +904,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          sif_power.fMask = SIF_ALL;
          sif_power.nMin = 0;
          sif_power.nMax = 63;//音量最大值为63
-         sif_power.nValue = 30;//初始音量值
+         sif_power.nValue = 35;//初始音量值
          sif_power.TrackSize = 22;//滑块值
          sif_power.ArrowSize = 0;//上下端宽度为0
          
@@ -918,7 +918,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam){
          sif_power_horn.fMask = SIF_ALL;
          sif_power_horn.nMin = 0;
          sif_power_horn.nMax = 63;//音量最大值为63
-         sif_power_horn.nValue = 30;//初始音量值
+         sif_power_horn.nValue = 35;//初始音量值
          sif_power_horn.TrackSize = 22;//滑块值
          sif_power_horn.ArrowSize = 0;//上下端宽度为0
          /* 喇叭音量调节 */
