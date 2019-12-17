@@ -1578,7 +1578,7 @@ static LRESULT Cam_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			BaseType_t xReturn = pdPASS;
 			xReturn = xTaskCreate((TaskFunction_t )Set_AutoFocus,      /* 任务入口函数 */
 														(const char*    )"Set_AutoFocus",    /* 任务名字 */
-														(uint16_t       )1024,                  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
+														(uint16_t       )8*1024/4,                  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
 														(void*          )NULL,                      /* 任务入口函数参数 */
 														(UBaseType_t    )5,                         /* 任务的优先级 */
 														(TaskHandle_t*  )&Set_AutoFocus_Task_Handle);     /* 任务控制块指针 */
@@ -1590,7 +1590,7 @@ static LRESULT Cam_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			
       xReturn = xTaskCreate((TaskFunction_t )Update_Dialog,      /* 任务入口函数 */
 														(const char*    )"Update_Dialog",    /* 任务名字 */
-														(uint16_t       )512,                  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
+														(uint16_t       )1024,                  /* 任务栈大小FreeRTOS的任务栈以字为单位 */
 														(void*          )NULL,                      /* 任务入口函数参数 */
 														(UBaseType_t    )6,                         /* 任务的优先级 */
 														(TaskHandle_t*  )&Update_Dialog_Handle);     /* 任务控制块指针 */
@@ -1697,7 +1697,6 @@ static LRESULT Cam_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
           //SCB_CleanInvalidateDCache();
           case 0:
           {
-            
             SCB_InvalidateDCache_by_Addr((uint32_t *)CamDialog.cam_buff1, cam_mode.cam_out_height*cam_mode.cam_out_width / 2);
             pSurf =CreateSurface(SURF_RGB565,cam_mode.cam_out_width, cam_mode.cam_out_height, 0, (U16*)CamDialog.cam_buff1);     
             ptmp = CamDialog.cam_buff1;
@@ -1803,7 +1802,6 @@ static LRESULT Cam_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
       if(id==eID_EXIT && code==BN_CLICKED)//退出窗口
       {
-			  OV5640_Capture_Control(DISABLE);
         PostCloseMessage(hwnd);
       }
       break;  
@@ -1832,6 +1830,8 @@ static LRESULT Cam_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				GUI_SemDelete(set_sem);
 			}
 			
+			OV5640_Reset();//复位摄像头
+      OV5640_Capture_Control(DISABLE);//关闭摄像头采集图像
       cam_mode.cam_out_height = GUI_YSIZE;
       cam_mode.cam_out_width = GUI_XSIZE;
       cam_mode.lcd_sx = 0;
@@ -1848,8 +1848,6 @@ static LRESULT Cam_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       CamDialog.focus_status = 1;
       state = 0;   //摄像头状态机
 			cur_index = 0;
-      GUI_VMEM_Free(CamDialog.cam_buff1);
-      GUI_VMEM_Free(CamDialog.cam_buff0);
       return PostQuitMessage(hwnd);
     }  
       
@@ -1897,5 +1895,7 @@ void	GUI_Camera_DIALOG(void)
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
   }
+	 GUI_VMEM_Free(CamDialog.cam_buff1);
+   GUI_VMEM_Free(CamDialog.cam_buff0);
 }
 

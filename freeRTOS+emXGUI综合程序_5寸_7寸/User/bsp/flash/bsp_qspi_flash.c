@@ -26,15 +26,16 @@ QSPI_HandleTypeDef QSPIHandle;
   */  
 uint8_t QSPI_FLASH_Init(void)
 {
-
+		uint8_t RES;
+	
     GPIO_InitTypeDef GPIO_InitStruct;
   
     /* 使能 QSPI 及 GPIO 时钟 */
     QSPI_FLASH_CLK_ENABLE();
     QSPI_FLASH_CLK_GPIO_ENABLE();
     QSPI_FLASH_BK1_IO0_CLK_ENABLE();
-	QSPI_FLASH_BK1_IO1_CLK_ENABLE();
-	QSPI_FLASH_BK1_IO2_CLK_ENABLE();
+	  QSPI_FLASH_BK1_IO1_CLK_ENABLE();
+	  QSPI_FLASH_BK1_IO2_CLK_ENABLE();
     QSPI_FLASH_BK1_IO3_CLK_ENABLE();
     QSPI_FLASH_CS_GPIO_CLK_ENABLE();
     
@@ -91,9 +92,9 @@ uint8_t QSPI_FLASH_Init(void)
 	QSPIHandle.Init.FlashID = QSPI_FLASH_ID_1;
     HAL_QSPI_Init(&QSPIHandle);
     /*初始化QSPI接口*/
-	BSP_QSPI_Init();
+	RES = BSP_QSPI_Init();
   
-  return 0;
+  return RES;
 }
 
 /**
@@ -240,8 +241,8 @@ uint8_t BSP_QSPI_FastRead(uint8_t* pData, uint32_t ReadAddr, uint32_t Size)
   }
 	/* 初始化读命令 */
 	s_command.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
-//	s_command.Instruction       = QUAD_INOUT_FAST_READ_CMD;
-	s_command.Instruction       = 0xEC;	
+	s_command.Instruction       = QUAD_INOUT_FAST_READ_CMD;
+//	s_command.Instruction       = 0xEC;	
 	s_command.AddressMode       = QSPI_ADDRESS_4_LINES;
 	s_command.AddressSize       = QSPI_ADDRESS_32_BITS;
 	s_command.Address           = ReadAddr;

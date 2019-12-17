@@ -1831,7 +1831,8 @@ static LRESULT Cam_win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				GUI_SemDelete(cam_sem);
 				GUI_SemDelete(set_sem);
 			}
-			
+			OV5640_Reset();//复位摄像头
+      OV5640_Capture_Control(DISABLE);//关闭摄像头采集图像
       cam_mode.cam_out_height = GUI_YSIZE;
       cam_mode.cam_out_width = GUI_XSIZE;
       cam_mode.lcd_sx = 0;

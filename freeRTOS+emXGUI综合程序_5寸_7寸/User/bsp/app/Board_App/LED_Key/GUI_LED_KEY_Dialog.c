@@ -105,6 +105,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
   {
     case WM_CREATE:
     {
+			LED_GPIO_Config();//初始LED
       Key_GPIO_Config();//初始化按键
       RECT rc;
       GetClientRect(hwnd, &rc); 

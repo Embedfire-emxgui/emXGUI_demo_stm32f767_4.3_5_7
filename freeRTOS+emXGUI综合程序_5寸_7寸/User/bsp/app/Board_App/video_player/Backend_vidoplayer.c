@@ -133,7 +133,7 @@ void AVI_play(char *filename)
     }
     audiosize=*(uint8_t *)(mid+offset+4)+256*(*(uint8_t *)(mid+offset+5));
   }
-  
+  I2S_Stop();
   I2S_Play_Stop();			/* 停止I2S录音和放音 */
 	wm8978_Reset();		/* 复位WM8978到复位状态 */	
   	/* 配置WM8978芯片，输入为DAC，输出为耳机 */
@@ -145,7 +145,7 @@ void AVI_play(char *filename)
 	/* 配置WM8978音频接口为飞利浦标准I2S接口，16bit */
 	wm8978_CfgAudioIF(I2S_STANDARD_PHILIPS, 16);
   I2S_GPIO_Config();
-  I2Sx_Mode_Config(I2S_STANDARD_PHILIPS, I2S_DATAFORMAT_16B, wavinfo->SampleRate);
+  I2Sx_Mode_Config(I2S_STANDARD_PHILIPS, I2S_DATAFORMAT_16B, 0);
   I2S_DMA_TX_Callback=MUSIC_I2S_DMA_TX_Callback;			//回调函数指wav_i2s_dma_callback
   I2S_Play_Stop();
   I2Sx_TX_DMA_Init((uint32_t )Sound_buf[1],(uint32_t )Sound_buf[2],audiosize/2);
@@ -154,6 +154,8 @@ void AVI_play(char *filename)
   audiosavebuf=0;
   audiobufflag=0;
   TIM3_Config((avihChunk->SecPerFrame/100)-1,9000-1);
+	
+	I2S_Start();
   I2S_Play_Start();  
 	
 	t0= GUI_GetTickCount();
@@ -190,9 +192,6 @@ void AVI_play(char *filename)
       continue;
     }    
 		int t1;
-    if(!VideoDialog.avi_chl)
-    {
-
         
 //        
 //   //fptr存放着文件指针的位置，fsize是文件的总大小，两者之间的比例和当前时间与总时长的比例相同（fptr/fsize = cur/all）     
@@ -311,11 +310,10 @@ void AVI_play(char *filename)
       
     }
     else 
-      break;
-					   	
+		{
+      break;	   	
     }
-    else
-    {
+
 			if(chgsch_TouchUp == 1)
 			 {
          pos = fileR.fptr;
@@ -354,7 +352,7 @@ void AVI_play(char *filename)
          VideoDialog.avi_chl = 0;    
 				 chgsch_TouchUp = 0;
 			 }
-     }
+     
          //判断下一帧的帧内容 
          Strtype=MAKEWORD(pbuffer+Strsize+2);//流类型
          Strsize=MAKEDWORD(pbuffer+Strsize+4);//流大小									

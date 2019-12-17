@@ -931,9 +931,9 @@ void BSP_AUDIO_OUT_ClockConfig(I2S_HandleTypeDef *hi2s, uint32_t AudioFreq, void
     RCC_ExCLKInitStruct.Sai2ClockSelection = RCC_I2SCLKSOURCE_PLLI2S;
     RCC_ExCLKInitStruct.PLLI2S.PLLI2SP = 0;
     RCC_ExCLKInitStruct.PLLI2S.PLLI2SN = 316;
-	RCC_ExCLKInitStruct.PLLI2S.PLLI2SR = 7;
-    RCC_ExCLKInitStruct.PLLI2S.PLLI2SQ = 4;
-    RCC_ExCLKInitStruct.PLLI2SDivQ = 1;
+	  RCC_ExCLKInitStruct.PLLI2S.PLLI2SR = 7;
+    RCC_ExCLKInitStruct.PLLI2S.PLLI2SQ = 1;
+    RCC_ExCLKInitStruct.PLLI2SDivQ = 4;
     HAL_RCCEx_PeriphCLKConfig(&RCC_ExCLKInitStruct);
   }
   else /* AUDIO_FREQUENCY_8K, AUDIO_FREQUENCY_16K, AUDIO_FREQUENCY_48K), AUDIO_FREQUENCY_96K */
@@ -945,7 +945,7 @@ void BSP_AUDIO_OUT_ClockConfig(I2S_HandleTypeDef *hi2s, uint32_t AudioFreq, void
     RCC_ExCLKInitStruct.PeriphClockSelection = RCC_PERIPHCLK_I2S;
     RCC_ExCLKInitStruct.Sai2ClockSelection = RCC_I2SCLKSOURCE_PLLI2S;
     RCC_ExCLKInitStruct.PLLI2S.PLLI2SP = 0;
-    RCC_ExCLKInitStruct.PLLI2S.PLLI2SN = 344;
+    RCC_ExCLKInitStruct.PLLI2S.PLLI2SN = 95;
   	RCC_ExCLKInitStruct.PLLI2S.PLLI2SR = 7;
     RCC_ExCLKInitStruct.PLLI2S.PLLI2SQ = 1;
     RCC_ExCLKInitStruct.PLLI2SDivQ = 1;

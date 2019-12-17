@@ -8,6 +8,7 @@
 #include "Bsp/wm8978/bsp_wm8978.h"
 uint16_t TaskGetState = 0;
 extern GUI_SEM * exit_sem;//创建一个信号量
+GUI_SEM * PlayRec_exit_sem=NULL;
 //图标管理数组
 recorder_icon_t record_icon[] = {
 
@@ -211,6 +212,7 @@ static void App_PlayRecord(HWND hwnd)
     GUI_msleep(20);
 	   
    }
+		GUI_SemPost(PlayRec_exit_sem);
 	 while(1)
 	 {
 		GUI_msleep(20);//任务结束,等待任务回收
@@ -614,6 +616,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          BOOL res = NULL;
 				
 				 exit_sem = GUI_SemCreate(0,1);//创建播放线程结束信号量
+				 PlayRec_exit_sem = GUI_SemCreate(0,1);//创建播放线程结束信号量
 				
          res = RES_Load_Content(GUI_RECORDER_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
          //res = FS_Load_Content(GUI_RECORDER_BACKGROUNG_PIC, (char**)&jpeg_buf, &jpeg_size);
@@ -686,7 +689,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
          xReturn = xTaskCreate((TaskFunction_t )(void(*)(void*))App_PlayRecord,  /* 任务入口函数 */
                             (const char*    )"App_PlayMusic",          /* 任务名字 */
-                            (uint16_t       )5*1024/4,                   /* 任务栈大小FreeRTOS的任务栈以字为单位 */
+                            (uint16_t       )8*1024/4,                   /* 任务栈大小FreeRTOS的任务栈以字为单位 */
                             (void*          )hwnd,                     /* 任务入口函数参数 */
                             (UBaseType_t    )5,                        /* 任务的优先级 */
                             (TaskHandle_t  )&h_play_record);           /* 任务控制块指针 */
@@ -694,7 +697,7 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				if(xReturn != pdPASS )
 				{
 					GUI_ERROR("GUI rec play Thread Create failed");
-				} 
+				}
                             
         xReturn = xTaskCreate((TaskFunction_t )(void(*)(void*))App_Record,  /* 任务入口函数 */
                             (const char*    )"Record Task",       /* 任务名字 */
@@ -1207,9 +1210,9 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				TaskGetState = eTaskGetState(h_play_record);
 				if(TaskGetState == 3)//获取任务状态,如果是挂起,则恢复任务以释放资源
 				{
-					vTaskResume(h_play_record);
+					vTaskResume(h_play_record);				
 				}
-
+				
 				if(NoSource_flag == 0)
 				{
 					GUI_SemWait(exit_sem, 0xFFFFFFFF);//只要播放过音频,就死等,等待任务结束
@@ -1218,20 +1221,22 @@ static LRESULT win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				{
 					NoSource_flag = 0;//NoSource_flag为1,因为没有找到资源,任务被挂起,清空标志位并退出
 				}
-				
-				thread = 0;  //线程结束,不继续播放   				
+				thread = 0;  //线程结束,不继续播放   
+//				GUI_SemWait(PlayRec_exit_sem, 0xFFFFFFFF);//只要播放过音频,就死等,等待任务结束
         DeleteDC(hdc_bk);
 				
         vTaskDelete(h_record);
         vTaskDelete(h_play_record);//回收任务
 				
 				GUI_SemDelete(exit_sem);
+				GUI_SemDelete(PlayRec_exit_sem);
 				
 				BUGLE_STATE = 0;
         music_file_num = 0;   // 复位文件记录
 				
         I2Sxext_Recorde_Stop();		        /* 停止SAI录音和放音 */
-				I2S_Play_Stop();
+				I2S_Play_Stop();				
+				I2S_Stop();
         wm8978_Reset();	      /* 复位WM8978到复位状态 */ 
 
         return PostQuitMessage(hwnd);		

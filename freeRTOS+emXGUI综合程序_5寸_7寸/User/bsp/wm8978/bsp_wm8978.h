@@ -130,6 +130,7 @@ extern void I2S_DMAConvCplt(DMA_HandleTypeDef *hdma);
 extern void I2Sxext_DMAConvCplt(DMA_HandleTypeDef *hdma);
 
 void I2S_GPIO_Config(void);
+void I2S_Start(void);
 void I2S_Stop(void);
 void I2Sx_Mode_Config(const uint16_t _usStandard, const uint16_t _usWordLen,const uint32_t _usAudioFreq);
 void I2Sx_TX_DMA_Init(const uint32_t buffer0,const uint32_t buffer1,const uint32_t num);

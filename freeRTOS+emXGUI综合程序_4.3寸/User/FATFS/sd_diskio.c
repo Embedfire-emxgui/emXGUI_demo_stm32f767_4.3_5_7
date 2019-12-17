@@ -152,25 +152,26 @@ DRESULT SD_ReadBlocks(BYTE *buff,//数据缓存区
   * @param  count: Number of sectors to read (1..128)
   * @retval DRESULT: Operation result
   */
-#if 1
+
 DRESULT SD_read(BYTE lun, BYTE *buff, DWORD sector, UINT count)
 {
     DRESULT res = RES_OK;
     uint32_t alignedAddr = 0;
-			/* 字节不对齐的情况 */
+	
+			/* 字节不对齐的情况.驱动中支持任意字节的读取,而Fatfs要求4字节对齐访问,所以当遇到读取的 */
     if ((DWORD)buff & 3) 
     {
         DWORD scratch[BLOCK_SIZE / 4];//以字为单位(4个字节)创建的BUF
 
         while (count--) 
         {
-            memcpy(scratch, buff, BLOCK_SIZE);//把不对齐的buf数据拷贝到对齐的数组中
             res = SD_read(lun,(void *)scratch, sector++, 1);
             
             if (res != RES_OK)
             {
                break;
             }
+						memcpy(buff,scratch,BLOCK_SIZE);//把不对齐的buf数据拷贝到对齐的数组中
             buff += BLOCK_SIZE;
         }
         return(res);
@@ -190,52 +191,6 @@ DRESULT SD_read(BYTE lun, BYTE *buff, DWORD sector, UINT count)
 		SCB_InvalidateDCache_by_Addr((uint32_t*)alignedAddr, count*BLOCK_SIZE + ((uint32_t)buff - alignedAddr));
   return res;
 }
-#else
-DRESULT SD_read(BYTE lun,//物理扇区，多个设备时用到(0...)
-                BYTE *buff,//数据缓存区 
-                DWORD sector, //扇区首地址
-                UINT count)//扇区个数(1..128)
-{
-  DRESULT res = RES_ERROR;
-  uint32_t i;
-  DWORD pbuff[512/4];	
-  	
-	RX_Flag = 0;
-	
-  if((DWORD)buff&3)
-  {
-    DRESULT res = RES_OK;
-    DWORD scratch[BLOCK_SIZE / 4];
-
-    while (count--) 
-    {
-      res = disk_read(0,(void *)scratch, sector++, 1);
-
-      if (res != RES_OK) 
-      {
-        break;
-      }
-      memcpy(buff, scratch, BLOCK_SIZE);
-      buff += BLOCK_SIZE;
-    }
-    return res;
-  }
-  
-    GUI_MutexLock(mutex_lock,0xffffff);
-	 	for(i=0;i<count;i++)
-		{
-			
-		 	res = SD_ReadBlocks((BYTE *)pbuff,sector+i,1);//单个sector的读操作
-      taskENTER_CRITICAL();
-			memcpy(buff,pbuff,512);
-      taskEXIT_CRITICAL();
-			buff+=512;
-		} 
-	
-  GUI_MutexUnlock(mutex_lock);
-  return RES_OK;
-}
-#endif
 
 /**
   * @brief  Writes Sector(s)

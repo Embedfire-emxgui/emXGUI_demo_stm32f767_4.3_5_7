@@ -891,6 +891,16 @@ void I2S_GPIO_Config(void)
 	HAL_GPIO_Init(WM8978_ADCDAT_PORT, &GPIO_InitStructure);
 }
 
+/**
+	* @brief  开始I2S工作
+	* @param  无
+	* @retval 无
+	*/
+void I2S_Start(void)
+{
+    //开启DMA TX发送请求,开始播放
+    I2S_InitStructure.Instance->CR2 |= SPI_CR2_TXDMAEN;
+}
 
 /**
 	* @brief  停止I2S工作
@@ -899,6 +909,7 @@ void I2S_GPIO_Config(void)
 	*/
 void I2S_Stop(void)
 {
+	HAL_I2S_DMAStop(&I2S_InitStructure);
 	/* 禁能 SPI2/I2S2 外设 */
 	__HAL_I2S_DISABLE(&I2S_InitStructure);
 	__HAL_I2S_DISABLE(&I2Sext_InitStructure);
@@ -930,7 +941,7 @@ void BSP_AUDIO_OUT_ClockConfig(I2S_HandleTypeDef *hi2s, uint32_t AudioFreq, void
     RCC_ExCLKInitStruct.Sai2ClockSelection = RCC_I2SCLKSOURCE_PLLI2S;
     RCC_ExCLKInitStruct.PLLI2S.PLLI2SP = 0;
     RCC_ExCLKInitStruct.PLLI2S.PLLI2SN = 316;
-	RCC_ExCLKInitStruct.PLLI2S.PLLI2SR = 7;
+		RCC_ExCLKInitStruct.PLLI2S.PLLI2SR = 7;
     RCC_ExCLKInitStruct.PLLI2S.PLLI2SQ = 4;
     RCC_ExCLKInitStruct.PLLI2SDivQ = 1;
     HAL_RCCEx_PeriphCLKConfig(&RCC_ExCLKInitStruct);
@@ -944,7 +955,7 @@ void BSP_AUDIO_OUT_ClockConfig(I2S_HandleTypeDef *hi2s, uint32_t AudioFreq, void
     RCC_ExCLKInitStruct.PeriphClockSelection = RCC_PERIPHCLK_I2S;
     RCC_ExCLKInitStruct.Sai2ClockSelection = RCC_I2SCLKSOURCE_PLLI2S;
     RCC_ExCLKInitStruct.PLLI2S.PLLI2SP = 0;
-    RCC_ExCLKInitStruct.PLLI2S.PLLI2SN = 344;
+    RCC_ExCLKInitStruct.PLLI2S.PLLI2SN = 95;
   	RCC_ExCLKInitStruct.PLLI2S.PLLI2SR = 7;
     RCC_ExCLKInitStruct.PLLI2S.PLLI2SQ = 1;
     RCC_ExCLKInitStruct.PLLI2SDivQ = 1;
@@ -1148,8 +1159,9 @@ void I2S_DMAConvCplt(DMA_HandleTypeDef *hdma)
 	*/
 void I2S_Play_Start(void)
 {   	  
-    //开启DMA TX发送请求,开始播放
-    I2S_InitStructure.Instance->CR2 |= SPI_CR2_TXDMAEN;
+  //恢复DMA TX发送请求,开始播放
+	HAL_I2S_DMAResume(&I2S_InitStructure);
+	wm8978_OutMute(0);
 }
 
 /**
@@ -1160,7 +1172,8 @@ void I2S_Play_Start(void)
 void I2S_Play_Stop(void)
 {   	 
 	//关闭DMA TX传输,结束播放 
-	HAL_I2S_DMAStop(&I2S_InitStructure);
+	HAL_I2S_DMAPause(&I2S_InitStructure);
+	wm8978_OutMute(1);//静音
 }
 
 /**

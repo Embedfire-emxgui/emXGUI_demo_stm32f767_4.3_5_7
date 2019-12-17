@@ -263,31 +263,31 @@ static	LRESULT	WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
         GetClientRect(hwnd, &rc);
 
-//        menu_list_1[0].bmp = bmp_icon[bmp_guiuse_icon];
-//        menu_list_1[1].bmp = bmp_icon[bmp_music_icon];
-//        menu_list_1[2].bmp = bmp_icon[bmp_video_icon];
-//        menu_list_1[3].bmp = bmp_icon[bmp_clock_icon];
-//			
-//        menu_list_1[4].bmp = bmp_icon[bmp_gyro_icon];
-//        menu_list_1[5].bmp = bmp_icon[bmp_rgbled_icon];
-//        menu_list_1[6].bmp = bmp_icon[bmp_camera_icon];
-//        menu_list_1[7].bmp = bmp_icon[bmp_photo_icon];
-//			
-//        menu_list_1[8].bmp = bmp_icon[bmp_humiture_icon];
-//        menu_list_1[9].bmp = bmp_icon[bmp_adc_icon];
-//        menu_list_1[10].bmp = bmp_icon[bmp_setting_icon];
-////        menu_list_1[11].bmp = bmp_icon[bmp_sudish_icon];
-//        menu_list_1[11].bmp = bmp_icon[bmp_entwork_icon];
-//				
-//				menu_list_1[12].bmp = bmp_icon[bmp_game_icon];
-//        menu_list_1[13].bmp = bmp_icon[bmp_phone_icon];
-//        menu_list_1[14].bmp = bmp_icon[bmp_note_icon];
-//        menu_list_1[15].bmp = bmp_icon[bmp_QRcode_icon];
-//				
-//        menu_list_1[16].bmp = bmp_icon[bmp_record_icon];
-//        menu_list_1[17].bmp = bmp_icon[bmp_widget_icon];
-//        menu_list_1[18].bmp = bmp_icon[bmp_beeper_icon];
-//				menu_list_1[19].bmp = bmp_icon[bmp_keyled_icon];
+        menu_list_1[0].bmp = bmp_icon[bmp_guiuse_icon];
+        menu_list_1[1].bmp = bmp_icon[bmp_music_icon];
+        menu_list_1[2].bmp = bmp_icon[bmp_video_icon];
+        menu_list_1[3].bmp = bmp_icon[bmp_clock_icon];
+			
+        menu_list_1[4].bmp = bmp_icon[bmp_gyro_icon];
+        menu_list_1[5].bmp = bmp_icon[bmp_rgbled_icon];
+        menu_list_1[6].bmp = bmp_icon[bmp_camera_icon];
+        menu_list_1[7].bmp = bmp_icon[bmp_photo_icon];
+			
+        menu_list_1[8].bmp = bmp_icon[bmp_humiture_icon];
+        menu_list_1[9].bmp = bmp_icon[bmp_adc_icon];
+        menu_list_1[10].bmp = bmp_icon[bmp_setting_icon];
+//        menu_list_1[11].bmp = bmp_icon[bmp_sudish_icon];
+        menu_list_1[11].bmp = bmp_icon[bmp_entwork_icon];
+				
+				menu_list_1[12].bmp = bmp_icon[bmp_game_icon];
+        menu_list_1[13].bmp = bmp_icon[bmp_phone_icon];
+        menu_list_1[14].bmp = bmp_icon[bmp_note_icon];
+        menu_list_1[15].bmp = bmp_icon[bmp_QRcode_icon];
+				
+        menu_list_1[16].bmp = bmp_icon[bmp_record_icon];
+        menu_list_1[17].bmp = bmp_icon[bmp_widget_icon];
+        menu_list_1[18].bmp = bmp_icon[bmp_beeper_icon];
+				menu_list_1[19].bmp = bmp_icon[bmp_keyled_icon];
 //        menu_list_1[19].bmp = bmp_icon[bmp_flash_icon];
 
               //ListMenu控件，需要在创建时传入一个 list_menu_cfg_t 的结构体参数.

@@ -214,7 +214,7 @@ void mp3PlayerDemo(HWND hwnd,const char *mp3file, uint8_t vol,uint8_t vol_horn, 
   //获取ID3V2的大小，并偏移至该位置,拖到任意位置播放功能
 	ID3V2_size = mp3_GetID3V2_Size(inputbuf);
 	GUI_DEBUG("ID3V2_size :%d",ID3V2_size);
-	f_lseek(&MP3_file,ID3V2_size& ~0x3f);	
+	f_lseek(&MP3_file,ID3V2_size);	
 	
 	result=f_read(&MP3_file,inputbuf,INPUTBUF_SIZE,&bw);
 	if(result!=FR_OK)
@@ -361,7 +361,7 @@ void mp3PlayerDemo(HWND hwnd,const char *mp3file, uint8_t vol,uint8_t vol_horn, 
 					I2Sx_Mode_Config(I2S_STANDARD_PHILIPS,I2S_DATAFORMAT_16B,mp3player.ucFreq);						//根据采样率修改iis速率
 					I2Sx_TX_DMA_Init((uint32_t)&outbuffer[0],(uint32_t)&outbuffer[1],outputSamps);//MP3BUFFER_SIZE);
 				}
-				I2S_Play_Start();
+				I2S_Start();
 			}
 		}//else 解码正常
 		
@@ -499,7 +499,7 @@ void mp3PlayerDemo(HWND hwnd,const char *mp3file, uint8_t vol,uint8_t vol_horn, 
 						 //根据时间计算文件位置并跳转至该位置
 						 pos = ID3V2_size + (time_sum/26)*frame_size;
 															 GUI_DEBUG(" pos : %ld",pos);
-						 result = f_lseek(&MP3_file,pos& ~0x3f);
+						 result = f_lseek(&MP3_file,pos);
 						 lrc.oldtime=0;
 						 lyriccount=0;
 						 chgsch=0;  
@@ -616,7 +616,7 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc, HWND hwnd)
       
 			I2Sx_Mode_Config(g_FmtList[Recorder.ucFmtIdx][0],g_FmtList[Recorder.ucFmtIdx][1],g_FmtList[Recorder.ucFmtIdx][2]);
       I2Sx_TX_DMA_Init((uint32_t)buffer0,(uint32_t)buffer1,RECBUFFER_SIZE);		
-	    I2S_Play_Start();
+	    I2S_Start();
    }
    /* 进入主程序循环体 */
    while(mp3player.ucStatus == STA_PLAYING){
@@ -663,7 +663,7 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc, HWND hwnd)
 						 {
 							 pos+=temp-(pos-sizeof(WavHead))%temp;
 						 }        
-						 f_lseek(&MP3_file,pos& (~0x3f));
+						 f_lseek(&MP3_file,pos);
 						 lrc.oldtime=0;
 						 lyriccount=0;
 						 chgsch=0; 
@@ -706,6 +706,7 @@ void wavplayer(const char *wavfile, uint8_t vol, HDC hdc, HWND hwnd)
    	 /* 停止I2S录音和放音 */
 	    I2Sxext_Recorde_Stop();
 	    I2S_Play_Stop();
+			I2S_Stop();
       wm8978_Reset();	/* 复位WM8978到复位状态 */
 			if(time2exit == 1)
 			{

@@ -69,7 +69,7 @@ void AVI_play(char *filename)
   hdc1 =CreateDC(pSurf1,NULL);
   
   pbuffer=Frame_buf;
-//  GUI_DEBUG("%s", filename);
+
   res=f_open(&fileR,filename,FA_READ);
   if(res!=FR_OK)
   {
@@ -111,7 +111,7 @@ void AVI_play(char *filename)
   {
     return;    
   }
-//  
+
   Strtype=MAKEWORD(pbuffer+mid+6);//流类型（movi后面有两个字符）
   Strsize=MAKEDWORD(pbuffer+mid+8);//流大小
   if(Strsize%2)Strsize++;//奇数加1
@@ -146,16 +146,16 @@ void AVI_play(char *filename)
 	/* 配置WM8978音频接口为飞利浦标准I2S接口，16bit */
 	wm8978_CfgAudioIF(I2S_STANDARD_PHILIPS, 16);
   I2S_GPIO_Config();
-  I2Sx_Mode_Config(I2S_STANDARD_PHILIPS, I2S_DATAFORMAT_16B, wavinfo->SampleRate);
-  I2S_DMA_TX_Callback=MUSIC_I2S_DMA_TX_Callback;			//回调函数指wav_i2s_dma_callback
+  I2Sx_Mode_Config(I2S_STANDARD_PHILIPS, I2S_DATAFORMAT_16B, 0);
+  I2S_DMA_TX_Callback=MUSIC_I2S_DMA_TX_Callback;			//回调函数指wav_i2s_dma_callback wavinfo->SampleRate
   I2S_Play_Stop();
-	I2S_Stop();
   I2Sx_TX_DMA_Init((uint32_t )Sound_buf[1],(uint32_t )Sound_buf[2],audiosize/2);
   audiobufflag=0;	    
   video_timeout=0;
   audiosavebuf=0;
   audiobufflag=0;
   TIM3_Config((avihChunk->SecPerFrame/100)-1,9000-1);
+	
   I2S_Start();
   I2S_Play_Start();  
 	
@@ -165,25 +165,17 @@ void AVI_play(char *filename)
 //   //歌曲总长度=每一帧需要的时间（s）*帧总数
   VideoDialog.alltime=(avihChunk->SecPerFrame/1000)*avihChunk->TotalFrame;
   VideoDialog.alltime/=1000;//单位是秒
-//  WCHAR buff[128];
-//  //char *str = NULL;
-// // RECT rc0 = {0, 367,120,30};//当前时间
+
   x_wsprintf(buff, L"分辨率：%d*%d", videoplayer_img_w, videoplayer_img_h);
   SetWindowText(GetDlgItem(VideoDialog.Video_Hwnd, eID_TEXTBOX_RES), buff);
 
-//  char *ss;
-//  int length1=strlen(filename);
-//  int length2=strlen(File_Path);
-//  if(strncpy(filename,File_Path,length2))//比较前n个字符串，类似strcpy
-//  {
-//    ss = filename + length2;
-//  }
+
   x_mbstowcs_cp936(buff, lcdlist[VideoDialog.playindex], 200);
   SetWindowText(GetDlgItem(VideoDialog.Video_Hwnd, eID_TEXTBOX_ITEM), buff);
   x_wsprintf(buff, L"%02d:%02d:%02d",
              VideoDialog.alltime/3600,(VideoDialog.alltime%3600)/60,VideoDialog.alltime%60);
   SetWindowText(GetDlgItem(VideoDialog.Video_Hwnd, eID_TEXTBOX_ALLTIME), buff);
-//  
+
   while(!VideoDialog.SWITCH_STATE)//播放循环
   {
 
@@ -193,20 +185,12 @@ void AVI_play(char *filename)
       continue;
     }    
 		int t1;
-    if(!VideoDialog.avi_chl)
-    {
-
-        
-//        
-//   //fptr存放着文件指针的位置，fsize是文件的总大小，两者之间的比例和当前时间与总时长的比例相同（fptr/fsize = cur/all）     
    VideoDialog.curtime=((double)fileR.fptr/fileR.fsize)*VideoDialog.alltime;
-//   //更新进度条
-   //GUI_DEBUG("%d", VideoDialog.curtime*255/VideoDialog.alltime);
+		
    if(!(SendMessage(VideoDialog.SBN_TIMER_Hwnd, SBM_GETSTATE,0,0)&SST_THUMBTRACK))
     SendMessage(VideoDialog.SBN_TIMER_Hwnd, SBM_SETVALUE, TRUE, VideoDialog.curtime*255/VideoDialog.alltime);     
-   //InvalidateRect(VideoDialog.Video_Hwnd, NULL, FALSE);
    
-   x_wsprintf(buff, L"%02d:%02d:%02d",///%02d:%02d:%02d alltime/3600,(alltime%3600)/60,alltime%60
+   x_wsprintf(buff, L"%02d:%02d:%02d",
               VideoDialog.curtime/3600,(VideoDialog.curtime%3600)/60,VideoDialog.curtime%60); 
    if(!VideoDialog.LIST_STATE)
     SetWindowText(GetDlgItem(VideoDialog.Video_Hwnd, eID_TEXTBOX_CURTIME), buff);    
@@ -222,12 +206,10 @@ void AVI_play(char *filename)
 				frame =0;
 			}
 
-      //HDC hdc_mem,hdc;
       pbuffer=Frame_buf;
       
 
       res = f_read(&fileR,Frame_buf,Strsize+8,&BytesRD);//读入整帧+下一数据流ID信息
-//      GUI_DEBUG("%d", GUI_GetTickCount()-tt0);
       
       if(res != FR_OK)
       {
@@ -238,42 +220,27 @@ void AVI_play(char *filename)
 		
 			if(frame&1)
 			{	
-#if 1		//直接写到窗口方式.	
+	//直接写到窗口方式.	
 
 				HWND hwnd=VideoDialog.Video_Hwnd;
-				//HDC hdc;
-				//hdc =GetDC(VideoDialog.Video_Hwnd);
 				
-				//hdc =BeginPaint(hwnd,&ps);
         
         GUI_MutexLock(AVI_JPEG_MUTEX,0xFFFFFFFF);    // 获取互斥量
-				//  JPEG_Out(hdc,160,89,Frame_buf,BytesRD);
 				JPEG_Out(hdc1,0,0,Frame_buf,BytesRD);
-//            ClrDisplay(hdc, &rc0, MapRGB(hdc, 0,0,0));
-//            SetTextColor(hdc, MapRGB(hdc,255,255,255));
-//            DrawText(hdc, buff,-1,&rc0,DT_VCENTER|DT_CENTER);
             
 
-//           SetWindowText(GetDlgItem(VideoPlayer_hwnd, ID_TB5), buff);
         x_wsprintf(buff, L"帧率：%dFPS/s", avi_fps);
         if(!VideoDialog.LIST_STATE)
           SetWindowText(GetDlgItem(VideoDialog.Video_Hwnd, eID_TEXTBOX_FPS), buff);
 
         bDrawVideo=TRUE;
-//        GUI_msleep(10);
+
         InvalidateRect(hwnd,NULL,FALSE); //产生无效区...
 
-//			  ReleaseDC(VideoDialog.Video_Hwnd,hdc);
-			 // EndPaint(hwnd,&ps);
         GUI_MutexUnlock(AVI_JPEG_MUTEX);              // 解锁互斥量				
-#endif
+
 
 			}
-
-//			while(bDrawVideo==TRUE)
-//			{
-//				GUI_msleep(5);
-//			}
 
       while(video_timeout==0)
       {   
@@ -314,12 +281,12 @@ void AVI_play(char *filename)
       
     }
     else 
+		{
       break;
-					   	
-    }
-    else
-    {
-			if(chgsch_TouchUp == 1)
+		}		   	
+    
+		/* 拖动进度条播放 */
+		if(chgsch_TouchUp == 1)
 			 {
          pos = fileR.fptr;
          //根据进度条调整播放位置				
@@ -356,15 +323,13 @@ void AVI_play(char *filename)
          VideoDialog.avi_chl = 0;  
 				 chgsch_TouchUp = 0;
 			 }
-     }
+     
          //判断下一帧的帧内容 
          Strtype=MAKEWORD(pbuffer+Strsize+2);//流类型
          Strsize=MAKEDWORD(pbuffer+Strsize+4);//流大小									
          if(Strsize%2)Strsize++;//奇数加1		  
-//        
-     }
-//  
-// 
+    }
+
 
 	GUI_VMEM_Free(Frame_buf);
   DeleteDC(hdc1);
@@ -395,7 +360,6 @@ void MUSIC_I2S_DMA_TX_Callback(void)
 	
 	if(DMA1_Stream2->CR&(1<<19)) //当前读取Memory1数据
 	{
-		//DMA_MemoryTargetConfig(DMA1_Stream2,(uint32_t)Sound_buf[audiobufflag], DMA_Memory_0);
     HAL_DMAEx_ChangeMemory(&hdma_spi2_tx, (uint32_t)Sound_buf[audiobufflag], MEMORY0);
 	}
 	else
@@ -431,7 +395,7 @@ void TIM3_Config(uint16_t period,uint16_t prescaler)
   // 初始化定时器TIM
   HAL_TIM_Base_Init(&TIM3_Handle);
   
-  HAL_NVIC_SetPriority(TIM3_IRQn, 2, 0);
+  HAL_NVIC_SetPriority(TIM3_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(TIM3_IRQn); 
   // 开启定时器更新中断
   HAL_TIM_Base_Start_IT(&TIM3_Handle);  
