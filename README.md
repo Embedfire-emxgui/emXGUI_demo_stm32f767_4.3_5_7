@@ -1,7 +1,7 @@
 关于本项目
 ------------------
 本项目通过git开源
--  github仓库地址：https://github.com/Embdefire/emXGUI_demo_stm32f767_4.3_5_7
+-  github仓库地址：https://github.com/Embedfire/emXGUI_demo_stm32f767_4.3_5_7
 
 -  gitee 地址：https://gitee.com/wildfireteam/emXGUI_demo_stm32f767_4.3_5_7
 
@@ -18,6 +18,7 @@ emxGUI综合程序简介
 | F429_挑战者开发板_V2   | 已适配   | emXGUI  | RT-Thread，FreeRTOS   |
 | H743_Pro开发板        | 已适配   | emXGUI  | FreeRTOS              |
 | H750_Pro开发板        | 已适配   | emXGUI  | FreeRTOS              |
+| F103_指南者开发板       | 已适配   | emXGUI  |FreeRTOS                |
 | F103_霸道开发板       | 已适配   | emXGUI  |FreeRTOS                |
 | F407_霸天虎开发板     |  已适配  | emXGUI  | FreeRTOS               |
 | F767_挑战者开发板_V2  |  已适配  | emXGUI  | FreeRTOS               |
