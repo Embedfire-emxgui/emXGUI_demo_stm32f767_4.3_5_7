@@ -31,48 +31,30 @@ HWND Boot_progbar = NULL;
   */
 static void App_Load_Res(void )
 {
-  static int thread=0;
+	HFONT hFont;
 
-  if(thread==0)
-  { 
-    /* 创建线程运行自己 */
-    GUI_Thread_Create((void(*)(void*))App_Load_Res,  /* 任务入口函数 */
-                        "Load Res",/* 任务名字 */
-                        40*1024,  /* 任务栈大小 */
-                        NULL, /* 任务入口函数参数 */
-                        1,    /* 任务的优先级 */
-                        10); /* 任务时间片，部分任务不支持 */
-    thread =1;
-    return;
-  }
-  while(thread) //线程已创建了
-  { 
-    HFONT hFont;
+	/* 加载字体到外部SDRAM，返回defaultFont */    
+	hFont = GUI_Init_Extern_Font();
+	if(hFont==NULL)
+	{
+		GUI_ERROR("GUI Extern Default Font Init Failed.");
 
-    /* 加载字体到外部SDRAM，返回defaultFont */    
-    hFont = GUI_Init_Extern_Font();
-    if(hFont==NULL)
-    {
-      GUI_ERROR("GUI Extern Default Font Init Failed.");
-
-      Load_state = FALSE;
-    }
-    else
-    {   
-      Load_state = TRUE;
-      /* 重设默认字体 */
-      GUI_SetDefFont(hFont);  
-    }  
+		Load_state = FALSE;
+	}
+	else
+	{   
+		Load_state = TRUE;
+		/* 重设默认字体 */
+		GUI_SetDefFont(hFont);  
+	}
     PIC_Load_To_SDRAM();
-    
-    //发消息给启动窗口，关闭
-    SendMessage(GUI_Boot_hwnd,WM_CLOSE,0,0);
-    thread = 0;  
+	
+	//发消息给启动窗口，关闭
+	SendMessage(GUI_Boot_hwnd,WM_CLOSE,0,0);
 
-    /* 删除线程自己 */
-    GUI_Thread_Delete(GUI_GetCurThreadHandle());
-  }
-  return;
+	/* 删除线程自己 */
+	GUI_Thread_Delete(GUI_GetCurThreadHandle());
+
 }
 
 /**
@@ -225,7 +207,14 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_TIMER:
     {
       /* 启动界面创建后timer时间后才开始加载 */
-      App_Load_Res();
+//      App_Load_Res();
+						/* 创建线程运行自己 */
+			GUI_Thread_Create((void(*)(void*))App_Load_Res,  /* 任务入口函数 */
+													"Load Res",/* 任务名字 */
+													10*1024,  /* 任务栈大小 */
+													NULL, /* 任务入口函数参数 */
+													1,    /* 任务的优先级 */
+													10); /* 任务时间片，部分任务不支持 */
       break;         
     }
     

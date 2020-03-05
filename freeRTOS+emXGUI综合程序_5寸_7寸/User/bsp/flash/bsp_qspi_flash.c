@@ -418,10 +418,23 @@ uint8_t BSP_QSPI_Erase_Chip(void)
 		return QSPI_ERROR;
 	} 
 	/* 配置自动轮询模式等待擦除结束 */  
-	if (QSPI_AutoPollingMemReady(W25Q256JV_BULK_ERASE_MAX_TIME) != QSPI_OK)
+//	if (QSPI_AutoPollingMemReady(W25Q256JV_BULK_ERASE_MAX_TIME) != QSPI_OK)
+//	{
+//		return QSPI_ERROR;
+//	}
+	uint8_t tmp,time=0;
+	while(1)
 	{
-		return QSPI_ERROR;
+		tmp = QSPI_FLASH_ReadStatusReg(1);
+		time+=1;
+		printf("\n tmp = %d ,Erased used time = %d\n",tmp,time);
+		GUI_msleep(1000);
+		if(tmp == 0)
+		{
+			break;
+		}
 	}
+	
 	return QSPI_OK;
 }
 
@@ -731,21 +744,21 @@ uint32_t QSPI_FLASH_ReadStatusReg(uint8_t reg)
 
 	if (HAL_QSPI_Command(&QSPIHandle, &s_command, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
 	{
-		printf("something wrong ....\r\n");
+		printf("something wrong1 ....\r\n");
 		/* 用户可以在这里添加一些代码来处理这个错误 */
-		while(1)
-		{
-			
-		}
+//		while(1)
+//		{
+//			
+//		}
 	}
 	if (HAL_QSPI_Receive(&QSPIHandle, pData, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
 	{
-		printf("something wrong ....\r\n");
+		printf("something wrong2 ....\r\n");
 		/* 用户可以在这里添加一些代码来处理这个错误 */
-		while(1)
-		{
-			
-		}
+//		while(1)
+//		{
+//			
+//		}
 	}
 
 		Temp = pData[0] ;

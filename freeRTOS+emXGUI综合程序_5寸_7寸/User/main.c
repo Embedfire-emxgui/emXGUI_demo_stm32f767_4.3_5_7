@@ -167,7 +167,7 @@ static void BSP_Init(void)
   
   /* SDRAM 初始化 */
 //  SDRAM_Init();
-	
+	QSPI_FLASH_Init();
 	/* usart 端口初始化 */
   Debug_USART_Config();
 
