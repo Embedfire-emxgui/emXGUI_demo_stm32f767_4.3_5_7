@@ -38,7 +38,7 @@ static void App_Load_Res(void )
     /* 创建线程运行自己 */
     GUI_Thread_Create((void(*)(void*))App_Load_Res,  /* 任务入口函数 */
                         "Load Res",/* 任务名字 */
-                        40*1024,  /* 任务栈大小 */
+                        20*1024,  /* 任务栈大小 */
                         NULL, /* 任务入口函数参数 */
                         1,    /* 任务的优先级 */
                         10); /* 任务时间片，部分任务不支持 */

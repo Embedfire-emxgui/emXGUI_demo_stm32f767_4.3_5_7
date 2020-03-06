@@ -47,7 +47,7 @@ static void App_Load_Res(void )
 		/* 重设默认字体 */
 		GUI_SetDefFont(hFont);  
 	}
-    PIC_Load_To_SDRAM();
+  PIC_Load_To_SDRAM();
 	
 	//发消息给启动窗口，关闭
 	SendMessage(GUI_Boot_hwnd,WM_CLOSE,0,0);

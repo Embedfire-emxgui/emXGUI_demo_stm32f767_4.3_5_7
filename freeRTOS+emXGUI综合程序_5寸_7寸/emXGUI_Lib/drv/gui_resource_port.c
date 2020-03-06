@@ -62,7 +62,7 @@ BOOL RES_DevInit(void)
     }
   #endif
 #elif defined(STM32F767xx)
-  if(1)//QSPI_FLASH_Init() == 0
+  if(QSPI_FLASH_Init() == 0)
   {
 //    GUI_DEBUG("\r\nFlash Status Reg1 is 0x%02X", QSPI_FLASH_ReadStatusReg(1));	
 //    GUI_DEBUG("\r\nFlash Status Reg2 is 0x%02X", QSPI_FLASH_ReadStatusReg(2));

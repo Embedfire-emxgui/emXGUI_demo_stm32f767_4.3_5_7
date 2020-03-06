@@ -35,38 +35,16 @@ extern BOOL res_not_found_flag;
   */
 static void App_FLASH_Writer(void )
 {
-  static int thread=0;
-  
-   //HDC hdc;
   u32 result;
-   
-	if(thread==0)
-	{ 
-      /* 创建线程运行自己 */
-      GUI_Thread_Create((void(*)(void*))App_FLASH_Writer,  /* 任务入口函数 */
-                            "Flash writer",/* 任务名字 */
-                            5*1024,  /* 任务栈大小 */
-                            NULL, /* 任务入口函数参数 */
-                            1,    /* 任务的优先级 */
-                            10); /* 任务时间片，部分任务不支持 */
-    thread =1;
 
-      return;
-	}
-	while(thread) //线程已创建了
-	{     
-    result = (u32)BurnFile();
-    
-    //发消息给wnd_res_writer_dialog,烧录结果
-    SendMessage(wnd_res_writer_dialog,MSG_MYWRITE_RESULT,result,0);
+	result = (u32)BurnFile();
 
-    thread = 0;       
+	//发消息给wnd_res_writer_dialog,烧录结果
+	SendMessage(wnd_res_writer_dialog,MSG_MYWRITE_RESULT,result,0);
 
-    /* 删除线程自己 */
-    GUI_Thread_Delete(GUI_GetCurThreadHandle());
+	/* 删除线程自己 */
+	GUI_Thread_Delete(GUI_GetCurThreadHandle());
 
-	}
-  return;
 }
 
 /**
@@ -224,8 +202,14 @@ If you really want to reload resources:\r\n\
       if(id == ID_BURN && code == BN_CLICKED)
       {
          wnd_res_writer_info_textbox = GetDlgItem(hwnd,ID_INFO);
-         App_FLASH_Writer();
-        
+//         App_FLASH_Writer();
+            /* 创建线程运行自己 */
+      GUI_Thread_Create((void(*)(void*))App_FLASH_Writer,  /* 任务入口函数 */
+                            "Flash writer",/* 任务名字 */
+                            15*1024,  /* 任务栈大小 */
+                            NULL, /* 任务入口函数参数 */
+                            11,    /* 任务的优先级 */
+                            10); /* 任务时间片，部分任务不支持 */  
          EnableWindow(GetDlgItem(hwnd,ID_BURN),DISABLE);
          ShowWindow(GetDlgItem(hwnd,ID_EXIT),SW_HIDE);
          ShowWindow(GetDlgItem(hwnd,ID_EXIT_INFO),SW_HIDE);

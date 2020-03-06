@@ -418,20 +418,25 @@ uint8_t BSP_QSPI_Erase_Chip(void)
 		return QSPI_ERROR;
 	} 
 	/* 配置自动轮询模式等待擦除结束 */  
-//	if (QSPI_AutoPollingMemReady(W25Q256JV_BULK_ERASE_MAX_TIME) != QSPI_OK)
+//	if (QSPI_AutoPollingMemReady(W25Q256JV_BULK_ERASE_MAX_TIME*10) != QSPI_OK)
 //	{
 //		return QSPI_ERROR;
 //	}
+	/* Hal轮询超时好像有问题 */  
 	uint8_t tmp,time=0;
 	while(1)
 	{
 		tmp = QSPI_FLASH_ReadStatusReg(1);
 		time+=1;
-		printf("\n tmp = %d ,Erased used time = %d\n",tmp,time);
+		printf("\n Register's value = %d ,Erased used time = %d sec\n",tmp,time);
 		GUI_msleep(1000);
 		if(tmp == 0)
 		{
 			break;
+		}
+		else if (tmp ==250)
+		{
+			return 1;//等待擦除超时
 		}
 	}
 	

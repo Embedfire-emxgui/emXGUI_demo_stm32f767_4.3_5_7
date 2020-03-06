@@ -61,15 +61,15 @@ static	LRESULT	win_proc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
   const WCHAR no_res_info[] = L"Some resources not found in the FLASH.\r\n\
 Follow the instructions below:\r\n\r\n\
 1.Insert an SD card with [srcdata] resource.\r\n\
-3.Power up again the board.\r\n\
-2.Click the button below to load the resources.";
+3.Click the button below to load the resources.\r\n\
+2.Power up again the board.";
   
   const WCHAR normal_res_info[] = L"Please [Exit] if you don't know what to do!!!\r\n\
 This app is use to reload resources\r\n\
 If you really want to reload resources:\r\n\
 1.Insert an SD card with [srcdata] resource.\r\n\
-3.Power up again the board.\r\n\
-2.Click the button below to load the resources.";
+3.Click the button below to load the resources.\r\n\
+2.Power up again the board.";
   
   /* 默认显示信息 */
   const WCHAR *pStr = normal_res_info;

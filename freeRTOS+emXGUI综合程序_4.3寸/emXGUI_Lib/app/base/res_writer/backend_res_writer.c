@@ -700,7 +700,6 @@ FRESULT BurnFile(void)
 #endif  
   /* 生成烧录目录信息文件 */
   Make_Catalog(src_dir,0);
-  
   /* 烧录 目录信息至FLASH*/
   Burn_Catalog();  
   /* 根据 目录 烧录内容至FLASH*/
