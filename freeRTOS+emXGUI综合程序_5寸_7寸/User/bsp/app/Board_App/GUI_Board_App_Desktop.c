@@ -149,6 +149,10 @@ struct __obj_list menu_list_1[] = {
       L"时钟",		      NULL,	  L"H",   RGB_WHITE,				(void(*)(void *))GUI_CLOCK_DIALOG,//dummy,
 				
 			L"陀螺仪",	      NULL,	  L"R", 	RGB_WHITE,			  (void(*)(void *))GUI_Gyro_Dialog,//dummy,
+      L"LED&KEY",       NULL,	  L"j",   RGB_WHITE,		 	  (void(*)(void *))GUI_LED_KEY_Dialog,
+      L"摄像头",	    	NULL,	  L"M",   RGB_WHITE, 				(void(*)(void *))GUI_Camera_DIALOG,//dummy,
+      L"以太网",	     	NULL,	  L"Q",   RGB_WHITE,				(void(*)(void *))GUI_NetworkDLG_Dialog,//dummy,
+      L"蜂鸣器",	      NULL, 	L"i",   RGB_WHITE,				(void(*)(void *))GUI_Beeper_Dialog,
       L"RGB彩灯",	     	NULL,	  L"L",   RGB_WHITE,				(void(*)(void *))GUI_LED_DIALOG,
       L"摄像头",	    	NULL,	  L"M",   RGB_WHITE, 				(void(*)(void *))GUI_Camera_DIALOG,//dummy,
       L"图片浏览器",  	NULL, 	L"G",   RGB_WHITE,				(void(*)(void *))GUI_PicViewer_Dialog,
@@ -156,8 +160,7 @@ struct __obj_list menu_list_1[] = {
       L"温湿度",	      NULL,   L"O",   RGB_WHITE,				(void(*)(void *))GUI_T_RH_Dialog,//dummy,
       L"电压表",		    NULL,	  L"W",   RGB_WHITE,				(void(*)(void *))GUI_ADC_CollectVoltage_Dialog,//dummy,  
 			L"设置",        	NULL,	  L"h",   RGB_WHITE,				(void(*)(void *))GUI_Settings_DIALOG,
-			L"以太网",	     	NULL,	  L"Q",   RGB_WHITE,				(void(*)(void *))GUI_NetworkDLG_Dialog,//dummy,
-				
+			
 			L"游戏",        	NULL,	  L"S",   RGB_WHITE,				(void(*)(void *))dummy,
       //L"模拟U盘",   	NULL,	  L"N",   RGB_WHITE,				dummy,       
       //L"WiFi",	    	NULL,	  L"P",   RGB_WHITE,				dummy,
@@ -167,27 +170,8 @@ struct __obj_list menu_list_1[] = {
 				
       L"录音机",	      NULL,	  L"Y", 	RGB_WHITE,			  (void(*)(void *))GUI_RECORDER_DIALOG,//dummy,        
       L"基础控件",	    NULL, 	L"D",   RGB_WHITE,				(void(*)(void *))GUI_DEMO_RadiaMenu,
-      L"蜂鸣器",	      NULL, 	L"i",   RGB_WHITE,				(void(*)(void *))GUI_Beeper_Dialog,
-			L"LED&KEY",       NULL,	  L"j",   RGB_WHITE,		 	  (void(*)(void *))GUI_LED_KEY_Dialog,				
-//        L"Radiobox",	NULL,   L"E", RGB_WHITE,				dummy,
-//        L"Textbox",	NULL,	  L"F", RGB_WHITE,				dummy,
 
-//        L"Speed",		NULL,	  L"G", RGB_WHITE,				dummy,
-//        L"Hello",		NULL,	  L"H", RGB_WHITE,				dummy,
-//        L"Button",	  NULL,	  L"I", 	RGB_WHITE,			dummy,
-//        L"Checkbox",	NULL,	  L"J", RGB_WHITE,				dummy,
-
-//        L"Checkbox",	NULL, 	L"D", RGB_WHITE,				dummy,
-//        L"Radiobox",	NULL,   L"E", RGB_WHITE,				dummy,
-//        L"Textbox",	NULL,	  L"F", RGB_WHITE,				dummy,
-
-//        L"Speed",		NULL,	  L"G", RGB_WHITE,				dummy,
-//        L"Hello",		NULL,	  L"H", RGB_WHITE,				dummy,
-//        L"Button",	  NULL,	  L"I", 	RGB_WHITE,			dummy,
-//        L"Checkbox",	NULL,	  L"J", RGB_WHITE,				dummy,
-//        L"FlashWriter",	  NULL,	  L"b", 	RGB_WHITE,			dummy,
-
-        NULL,	NULL,	NULL,NULL, NULL,//结束标志!
+      NULL,	NULL,	NULL,NULL, NULL,//结束标志!
 
 };
 
