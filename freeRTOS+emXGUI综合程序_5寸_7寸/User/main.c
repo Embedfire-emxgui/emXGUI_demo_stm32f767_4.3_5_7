@@ -69,6 +69,7 @@
 */
 static void GUI_Thread_Entry(void* pvParameters);/* Test_Task任务实现 */
 static void BSP_Init(void);
+static void NAND_CE_INIT(void);
   
 /*****************************************************************
   * @brief  主函数
@@ -165,6 +166,9 @@ static void BSP_Init(void)
 	/* LED 端口初始化 */
 	LED_GPIO_Config();
   
+  /* 禁用 NAND */
+  NAND_CE_INIT();
+  
   /* SDRAM 初始化 */
 //  SDRAM_Init();
 
@@ -189,6 +193,31 @@ static void BSP_Init(void)
   cm_backtrace_init("Fire_FreeRTOS", HARDWARE_VERSION, SOFTWARE_VERSION);
 }
  
+/**
+  * @brief  禁用NAND FLASH
+  * @param  无
+  * @param  无
+  * @retval 无
+  */
+static void NAND_CE_INIT(void)
+{
+  /*定义一个GPIO_InitTypeDef类型的结构体*/
+  GPIO_InitTypeDef GPIO_InitStruct;
+  /*使能引脚时钟*/        
+  __HAL_RCC_GPIOG_CLK_ENABLE();
+  /*选择要控制的GPIO引脚*/                                                                                                                           
+  GPIO_InitStruct.Pin = GPIO_PIN_9;        
+  /*设置引脚的输出类型为推挽输出*/
+  GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP;      
+  /*设置引脚为上拉模式*/
+  GPIO_InitStruct.Pull  = GPIO_PULLUP;
+  /*设置引脚速率为高速 */   
+  GPIO_InitStruct.Speed = GPIO_SPEED_FAST; 
+  /*调用库函数，使用上面配置的GPIO_InitStructure初始化GPIO*/
+  HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);        
+  /*禁用NAND FLASH*/
+  HAL_GPIO_WritePin(GPIOG, GPIO_PIN_9, GPIO_PIN_SET);  
+}
 
 /**
   * @brief  System Clock 配置
